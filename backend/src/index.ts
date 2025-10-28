@@ -14,12 +14,14 @@ app.use(express.json());
 import authRoutes from './routes/auth.routes';
 import expensesRoutes from './routes/expenses.routes';
 import budgetsRoutes from './routes/budgets.routes';
+import categoriesRoutes from './routes/categories.routes';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expensesRoutes);
 app.use('/api/budgets', budgetsRoutes);
+app.use('/api/categories', categoriesRoutes);
 
 // Swagger UI
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

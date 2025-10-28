@@ -19,3 +19,4 @@ __exportStar(require("./interfaces/BudgetWithCategory"), exports);
 __exportStar(require("./interfaces/Expense"), exports);
 __exportStar(require("./interfaces/ExpenseWithCategory"), exports);
 __exportStar(require("./interfaces/ExpenseFilters"), exports);
+__exportStar(require("./interfaces/Category"), exports);

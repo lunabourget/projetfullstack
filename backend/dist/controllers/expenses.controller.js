@@ -5,13 +5,13 @@ const expense_service_1 = require("../services/expense.service");
 const expenseService = new expense_service_1.ExpenseService();
 const createExpense = async (req, res) => {
     try {
-        const { category_id, amount, description, date } = req.body;
+        const { budget_id, amount, description, date } = req.body;
         const user_id = req.user?.id;
         if (!user_id) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
         }
-        const expense = await expenseService.createExpense(user_id, category_id, amount, description, new Date(date));
+        const expense = await expenseService.createExpense(user_id, budget_id, amount, description, new Date(date));
         res.status(201).json(expense);
     }
     catch (error) {
@@ -31,7 +31,7 @@ const getExpenses = async (req, res) => {
             user_id,
             startDate: req.query.startDate,
             endDate: req.query.endDate,
-            category_id: req.query.category_id ? Number(req.query.category_id) : undefined
+            budget_id: req.query.budget_id ? Number(req.query.budget_id) : undefined
         };
         const expenses = await expenseService.getExpenses(filters);
         res.json(expenses);

@@ -6,7 +6,7 @@ const expenseService = new ExpenseService();
 
 export const createExpense = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { category_id, amount, description, date } = req.body;
+        const { budget_id, amount, description, date } = req.body;
         const user_id = req.user?.id;
 
         if (!user_id) {
@@ -14,13 +14,7 @@ export const createExpense = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        const expense = await expenseService.createExpense(
-            user_id,
-            category_id,
-            amount,
-            description,
-            new Date(date)
-        );
+        const expense = await expenseService.createExpense(user_id, budget_id, amount, description, new Date(date));
         res.status(201).json(expense);
     } catch (error) {
         console.error('Error creating expense:', error);
@@ -41,7 +35,7 @@ export const getExpenses = async (req: Request, res: Response): Promise<void> =>
             user_id,
             startDate: req.query.startDate as string,
             endDate: req.query.endDate as string,
-            category_id: req.query.category_id ? Number(req.query.category_id) : undefined
+            budget_id: req.query.budget_id ? Number(req.query.budget_id) : undefined
         };
 
         const expenses = await expenseService.getExpenses(filters);

@@ -11,7 +11,7 @@ const auth = (req, res, next) => {
         if (!header)
             return res.status(401).json({ error: 'No token provided' });
         const token = header.replace(/Bearer\s+/i, '');
-        const secret = process.env.JWT_SECRET || 'your-secret-key';
+        const secret = process.env.JWT_SECRET || '';
         const decoded = jsonwebtoken_1.default.verify(token, secret);
         if (!decoded.id || !decoded.pseudo || typeof decoded.id !== 'number' || typeof decoded.pseudo !== 'string') {
             return res.status(401).json({ error: 'Invalid token payload' });
