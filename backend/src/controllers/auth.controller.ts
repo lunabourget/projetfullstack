@@ -38,3 +38,35 @@ export const login = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Erreur serveur lors de la connexion.' });
   }
 };
+
+// Modifier un utilisateur
+export const update = async (req: Request, res: Response) => {
+  const userId = Number(req.params.id);
+  const { pseudo, password } = req.body;
+
+  try {
+    const user = await updateUser(userId, pseudo, password);
+    res.json(user);
+  } catch (err: any) {
+    if (err.message === 'PseudoExists') return res.status(409).json({ error: 'Ce pseudo est déjà utilisé.' });
+    if (err.message === 'NoFieldsToUpdate') return res.status(400).json({ error: 'Aucun champ à mettre à jour.' });
+    if (err.message === 'UserNotFound') return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+    console.error(err);
+    res.status(500).json({ error: 'Erreur serveur lors de la mise à jour.' });
+  }
+};
+
+// Supprimer un utilisateur
+export const remove = async (req: Request, res: Response) => {
+  const userId = Number(req.params.id);
+
+  try {
+    const result = await deleteUser(userId);
+    res.json({ message: `Utilisateur ${result.id} supprimé.` });
+  } catch (err: any) {
+    if (err.message === 'UserNotFound') return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+    console.error(err);
+    res.status(500).json({ error: 'Erreur serveur lors de la suppression.' });
+  }
+};
+

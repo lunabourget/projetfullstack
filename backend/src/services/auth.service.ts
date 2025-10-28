@@ -53,7 +53,60 @@ export const loginUser = async (pseudo: string, password: string) => {
   }
 
   // Générer un token
-  const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    const token = jwt.sign({ id: user.id, pseudo: user.pseudo }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
   return { token, user: { id: user.id, pseudo: user.pseudo } };
 };
+
+// Modifier un utilisateur
+export const updateUser = async (userId: number, pseudo?: string, password?: string) => {
+  // Vérifier si pseudo existe déjà (si on veut le modifier)
+  if (pseudo) {
+    const existing = await pool.query('SELECT id FROM users WHERE pseudo = $1 AND id != $2', [pseudo, userId]);
+    if (existing.rows.length > 0) {
+      throw new Error('PseudoExists');
+    }
+  }
+
+  let hashed: string | undefined;
+  if (password) {
+    hashed = await bcrypt.hash(password, 10);
+  }
+
+  const updates: string[] = [];
+  const values: any[] = [];
+  let idx = 1;
+
+  if (pseudo) {
+    updates.push(`pseudo = $${idx++}`);
+    values.push(pseudo);
+  }
+  if (hashed) {
+    updates.push(`password_hash = $${idx++}`);
+    values.push(hashed);
+  }
+
+  if (updates.length === 0) {
+    throw new Error('NoFieldsToUpdate');
+  }
+
+  values.push(userId); // pour WHERE
+  const query = `UPDATE users SET ${updates.join(', ')} WHERE id = $${idx} RETURNING id, pseudo`;
+  const result = await pool.query(query, values);
+
+  if (result.rows.length === 0) {
+    throw new Error('UserNotFound');
+  }
+
+  return result.rows[0];
+};
+
+// Supprimer un utilisateur
+export const deleteUser = async (userId: number) => {
+  const result = await pool.query('DELETE FROM users WHERE id = $1 RETURNING id', [userId]);
+  if (result.rows.length === 0) {
+    throw new Error('UserNotFound');
+  }
+  return { id: userId };
+};
+
