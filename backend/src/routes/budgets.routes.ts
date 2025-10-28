@@ -6,8 +6,9 @@ const router = express.Router();
 
 router.use(auth);
 
+router.post('/', controllers.createBudgets);
 router.get('/', controllers.getBudgets);
-router.get('/tracking', controllers.getBudgetTracking);
+router.put('/:id', controllers.updateBudget);
 router.delete('/:id', controllers.deleteBudget);
 
 export default router;
