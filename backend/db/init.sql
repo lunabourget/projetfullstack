@@ -25,7 +25,7 @@ CREATE TABLE budgets (
     amount DECIMAL(12,2) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT valid_amount CHECK (amount >= 0),
+    CONSTRAINT valid_amount CHECK (amount >= 0)
 );
 
 -- Table des dépenses
