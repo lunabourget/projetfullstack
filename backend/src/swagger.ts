@@ -155,6 +155,52 @@ swaggerSpec.paths = {
       }
     }
   },
+  '/api/auth/{id}': {
+    put: {
+      tags: ['Auth'],
+      summary: 'Mettre à jour un utilisateur (pseudo et/ou mot de passe)',
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        { name: 'id', in: 'path', required: true, schema: { type: 'integer' } }
+      ],
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                pseudo: { type: 'string' },
+                password: { type: 'string' }
+              }
+            }
+          }
+        }
+      },
+      responses: {
+        '200': { description: 'Utilisateur mis à jour', content: { 'application/json': { schema: { $ref: '#/components/schemas/User' } } } },
+        '400': { description: 'Aucun champ à mettre à jour', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+        '401': { description: 'Non autorisé', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+        '404': { description: 'Utilisateur non trouvé', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+        '409': { description: 'Pseudo déjà utilisé', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+        '500': { description: 'Erreur serveur', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+      }
+    },
+    delete: {
+      tags: ['Auth'],
+      summary: 'Supprimer un utilisateur',
+      security: [{ bearerAuth: [] }],
+      parameters: [
+        { name: 'id', in: 'path', required: true, schema: { type: 'integer' } }
+      ],
+      responses: {
+        '200': { description: 'Utilisateur supprimé', content: { 'application/json': { schema: { type: 'object', properties: { message: { type: 'string' } } } } } },
+        '401': { description: 'Non autorisé', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+        '404': { description: 'Utilisateur non trouvé', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } },
+        '500': { description: 'Erreur serveur', content: { 'application/json': { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+      }
+    }
+  },
 
   // Budgets
   '/api/budgets': {
@@ -227,8 +273,28 @@ swaggerSpec.paths = {
       tags: ['Expenses'],
       summary: 'Create an expense',
       security: [{ bearerAuth: [] }],
-  requestBody: { required: true, content: { 'application/json': { schema: { type: 'object', properties: { budget_id: { type: 'integer' }, amount: { type: 'number', format: 'float' }, description: { type: 'string' }, date: { type: 'string', format: 'date' } }, required: ['budget_id', 'amount'] } } } },
-      responses: { '201': { description: 'Created', content: { 'application/json': { schema: { $ref: '#/components/schemas/Expense' } } } }, '400': { description: 'Bad Request' }, '401': { description: 'Unauthorized' } }
+      requestBody: {
+        required: true,
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                budget_id: { type: 'integer' },
+                amount: { type: 'number', format: 'float' },
+                description: { type: 'string' },
+                date: { type: 'string', format: 'date' }
+              },
+              required: ['budget_id', 'amount']
+            }
+          }
+        }
+      },
+      responses: {
+        '201': { description: 'Created', content: { 'application/json': { schema: { $ref: '#/components/schemas/Expense' } } } },
+        '400': { description: 'Bad Request' },
+        '401': { description: 'Unauthorized' }
+      }
     }
   },
   '/api/expenses/{id}': {
@@ -237,7 +303,7 @@ swaggerSpec.paths = {
       summary: 'Update an expense',
       security: [{ bearerAuth: [] }],
       parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
-  requestBody: { content: { 'application/json': { schema: { type: 'object', properties: { amount: { type: 'number', format: 'float' }, description: { type: 'string' }, budget_id: { type: 'integer' }, date: { type: 'string', format: 'date' } } } } } },
+      requestBody: { content: { 'application/json': { schema: { type: 'object', properties: { amount: { type: 'number', format: 'float' }, description: { type: 'string' }, budget_id: { type: 'integer' }, date: { type: 'string', format: 'date' } } } } } },
       responses: { '200': { description: 'Updated', content: { 'application/json': { schema: { $ref: '#/components/schemas/Expense' } } } }, '401': { description: 'Unauthorized' }, '404': { description: 'Not found' } }
     },
     delete: {
@@ -247,8 +313,8 @@ swaggerSpec.paths = {
       parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
       responses: { '200': { description: 'Deleted' }, '401': { description: 'Unauthorized' }, '404': { description: 'Not found' } }
     }
-  }
-  ,
+  },
+
   // Categories
   '/api/categories': {
     get: {
