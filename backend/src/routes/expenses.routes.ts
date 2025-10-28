@@ -8,6 +8,7 @@ router.use(auth);
 router.use(auth);
 
 router.post('/', controllers.createExpense);
+router.get('/budget/:budget_id', controllers.getExpensesByBudget);
 router.get('/', controllers.getExpenses);
 router.put('/:id', controllers.updateExpense);
 router.delete('/:id', controllers.deleteExpense);
