@@ -5,24 +5,24 @@ import { Expense, ExpenseWithCategory, ExpenseFilters } from '../types';
 export class ExpenseService {
     async createExpense(
         userId: number,
-        categoryId: number,
+        budgetId: number,
         amount: number,
         description: string,
         date: Date
     ): Promise<Expense> {
         const result: QueryResult = await pool.query(
-            'INSERT INTO expenses (user_id, category_id, amount, description, date) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [userId, categoryId, amount, description, date]
+            'INSERT INTO expenses (user_id, budget_id, amount, description, date) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [userId, budgetId, amount, description, date]
         );
         return result.rows[0];
     }
 
-    async getExpenses(filters: ExpenseFilters): Promise<ExpenseWithCategory[]> {
+    async getExpenses(filters: ExpenseFilters): Promise<ExpenseWithBudget[]> {
         const queryParams: any[] = [filters.user_id];
         let query = `
-            SELECT e.*, c.name as category_name 
+            SELECT e.*, c.name as budget_name 
             FROM expenses e 
-            JOIN categories c ON e.category_id = c.id 
+            JOIN budgets c ON e.budget_id = c.id 
             WHERE e.user_id = $1
         `;
         
