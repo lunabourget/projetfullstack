@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { registerUser, loginUser } from '../services/auth.service';
+import { registerUser, loginUser, updateUser, deleteUser } from '../services/auth.service';
 
 export const register = async (req: Request, res: Response) => {
   const { pseudo, password } = req.body;
@@ -39,7 +39,6 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-// Modifier un utilisateur
 export const update = async (req: Request, res: Response) => {
   const userId = Number(req.params.id);
   const { pseudo, password } = req.body;
@@ -56,7 +55,6 @@ export const update = async (req: Request, res: Response) => {
   }
 };
 
-// Supprimer un utilisateur
 export const remove = async (req: Request, res: Response) => {
   const userId = Number(req.params.id);
 
