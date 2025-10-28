@@ -96,3 +96,26 @@ export const deleteExpense = async (req: Request, res: Response): Promise<void> 
         res.status(500).json({ message: 'Error deleting expense' });
     }
 };
+
+export const getExpensesByBudget = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const user_id = req.user?.id;
+        const budget_id = Number(req.params.budget_id);
+
+        if (!user_id) {
+            res.status(401).json({ message: 'Unauthorized' });
+            return;
+        }
+
+        if (isNaN(budget_id)) {
+            res.status(400).json({ message: 'Invalid budget ID' });
+            return;
+        }
+
+        const expenses = await expenseService.getExpenses({ user_id, budget_id });
+        res.json(expenses);
+    } catch (error) {
+        console.error('Error fetching expenses by budget:', error);
+        res.status(500).json({ message: 'Error fetching expenses by budget' });
+    }
+};
