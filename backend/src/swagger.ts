@@ -188,10 +188,22 @@ swaggerSpec.paths = {
   '/api/budgets/{id}': {
     put: {
       tags: ['Budgets'],
-      summary: 'Update budget amount',
+      summary: 'Update budget (amount and/or category)',
       security: [{ bearerAuth: [] }],
       parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
-      requestBody: { content: { 'application/json': { schema: { type: 'object', properties: { amount: { type: 'number', format: 'float' } }, required: ['amount'] } } } },
+      requestBody: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                amount: { type: 'number', format: 'float' },
+                category_id: { type: 'integer' }
+              }
+            }
+          }
+        }
+      },
       responses: {
         '200': { description: 'Updated', content: { 'application/json': { schema: { $ref: '#/components/schemas/Budget' } } } },
         '401': { description: 'Unauthorized' },

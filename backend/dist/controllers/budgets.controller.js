@@ -39,13 +39,13 @@ exports.getBudgets = getBudgets;
 const updateBudget = async (req, res) => {
     try {
         const { id } = req.params;
-        const { amount } = req.body;
+        const { amount, category_id } = req.body;
         const user_id = req.user?.id;
         if (!user_id) {
             res.status(401).json({ message: 'Unauthorized' });
             return;
         }
-        const budget = await budgetService.updateBudget(Number.parseInt(id), user_id, amount);
+        const budget = await budgetService.updateBudget(Number.parseInt(id), user_id, typeof amount !== 'undefined' ? Number(amount) : undefined, typeof category_id !== 'undefined' ? Number(category_id) : undefined);
         if (!budget) {
             res.status(404).json({ message: 'Budget not found or unauthorized' });
             return;

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = exports.registerUser = void 0;
+exports.deleteUser = exports.updateUser = exports.loginUser = exports.registerUser = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const db_1 = require("../db");
@@ -35,3 +35,45 @@ const loginUser = async (pseudo, password) => {
     return { token, user: { id: user.id, pseudo: user.pseudo } };
 };
 exports.loginUser = loginUser;
+const updateUser = async (userId, pseudo, password) => {
+    if (pseudo) {
+        const existing = await db_1.pool.query('SELECT id FROM users WHERE pseudo = $1 AND id != $2', [pseudo, userId]);
+        if (existing.rows.length > 0) {
+            throw new Error('PseudoExists');
+        }
+    }
+    let hashed;
+    if (password) {
+        hashed = await bcrypt_1.default.hash(password, 10);
+    }
+    const updates = [];
+    const values = [];
+    let idx = 1;
+    if (pseudo) {
+        updates.push(`pseudo = $${idx++}`);
+        values.push(pseudo);
+    }
+    if (hashed) {
+        updates.push(`password_hash = $${idx++}`);
+        values.push(hashed);
+    }
+    if (updates.length === 0) {
+        throw new Error('NoFieldsToUpdate');
+    }
+    values.push(userId);
+    const query = `UPDATE users SET ${updates.join(', ')} WHERE id = $${idx} RETURNING id, pseudo`;
+    const result = await db_1.pool.query(query, values);
+    if (result.rows.length === 0) {
+        throw new Error('UserNotFound');
+    }
+    return result.rows[0];
+};
+exports.updateUser = updateUser;
+const deleteUser = async (userId) => {
+    const result = await db_1.pool.query('DELETE FROM users WHERE id = $1 RETURNING id', [userId]);
+    if (result.rows.length === 0) {
+        throw new Error('UserNotFound');
+    }
+    return { id: userId };
+};
+exports.deleteUser = deleteUser;

@@ -14,8 +14,13 @@ class BudgetService {
              WHERE b.user_id = $1`, [userId]);
         return result.rows;
     }
-    async updateBudget(budgetId, userId, amount) {
-        const result = await db_1.pool.query('UPDATE budgets SET amount = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 AND user_id = $3 RETURNING *', [amount, budgetId, userId]);
+    async updateBudget(budgetId, userId, amount, categoryId) {
+        const result = await db_1.pool.query(`UPDATE budgets SET
+                 amount = COALESCE($1, amount),
+                 category_id = COALESCE($2, category_id),
+                 updated_at = CURRENT_TIMESTAMP
+             WHERE id = $3 AND user_id = $4
+             RETURNING *`, [amount ?? null, categoryId ?? null, budgetId, userId]);
         return result.rows[0] || null;
     }
     async deleteBudget(budgetId, userId) {
