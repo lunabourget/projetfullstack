@@ -1,5 +1,5 @@
 import express from 'express';
-//import controllers from '../controllers/budgets.controller';
+import * as controllers from '../controllers/budgets.controller';
 import { auth } from '../middleware/auth';
 
 const router = express.Router();

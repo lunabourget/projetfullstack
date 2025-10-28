@@ -14,10 +14,16 @@ app.use(express.json());
 import authRoutes from './routes/auth.routes';
 import expensesRoutes from './routes/expenses.routes';
 import budgetsRoutes from './routes/budgets.routes';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/expenses', expensesRoutes);
 app.use('/api/budgets', budgetsRoutes);
+
+// Swagger UI
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/api/docs.json', (req, res) => res.json(swaggerSpec));
 
 app.get('/', (req, res) => res.json({ message: 'NOXYON Budget API (TS)'}));
 
