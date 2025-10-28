@@ -32,7 +32,7 @@ CREATE TABLE budgets (
 CREATE TABLE expenses (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
+    budget_id INTEGER REFERENCES budgets(id) ON DELETE SET NULL,
     amount DECIMAL(12,2) NOT NULL,
     description TEXT,
     date DATE NOT NULL DEFAULT CURRENT_DATE,
