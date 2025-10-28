@@ -1,10 +1,9 @@
 import express from 'express';
-//import controllers from '../controllers/auth.controller';
+import { register, login } from '../controllers/auth.controller.js';
 
 const router = express.Router();
 
-// utiliser des validators dans un middleware (pour plus tard)
-router.post('/register', registerValidation, controllers.register);
-router.post('/login', loginValidation, controllers.login);
+router.post('/register', register);
+router.post('/login', login);
 
 export default router;
