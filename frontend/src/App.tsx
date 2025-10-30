@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "r
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import authService from "./services/auth.service";
+import Header from "./components/header";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = authService.getToken();
@@ -34,7 +35,20 @@ function App() {
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
+                <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/app/*"
+          element={
+            <PrivateRoute>
+              <>
+                <Header />
+                <Routes>
+                  <Route path="dashboard" element={<Dashboard />} />
+                </Routes>
+              </>
             </PrivateRoute>
           }
         />

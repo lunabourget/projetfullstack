@@ -20,5 +20,25 @@
             "database": "mydatabase",
             "username": "postgres"
         }
-    ]
+    ],
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#c5b3ff",
+        "activityBar.background": "#c5b3ff",
+        "activityBar.foreground": "#15202b",
+        "activityBar.inactiveForeground": "#15202b99",
+        "activityBarBadge.background": "#df3500",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "commandCenter.border": "#15202b99",
+        "sash.hoverBorder": "#c5b3ff",
+        "statusBar.background": "#9e80ff",
+        "statusBar.foreground": "#15202b",
+        "statusBarItem.hoverBackground": "#774dff",
+        "statusBarItem.remoteBackground": "#9e80ff",
+        "statusBarItem.remoteForeground": "#15202b",
+        "titleBar.activeBackground": "#9e80ff",
+        "titleBar.activeForeground": "#15202b",
+        "titleBar.inactiveBackground": "#9e80ff99",
+        "titleBar.inactiveForeground": "#15202b99"
+    },
+    "peacock.color": "#9e80ff"
 }
