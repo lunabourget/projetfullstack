@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import { /* MUI imports */ } from "@mui/material";
 import authService from "../services/auth.service";
 
-// 1️⃣ Définition des props
 interface AuthPageProps {
   onLoginSuccess: () => void;
 }
 
-// 2️⃣ Typage du composant avec React.FC<Props>
 const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [pseudo, setPseudo] = useState("");
@@ -26,7 +24,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       if (isLogin) {
         await authService.login(pseudo, password);
         setMessage("Connexion réussie !");
-        onLoginSuccess(); // ✅ on met à jour l'état parent
+        onLoginSuccess();
       } else {
         await authService.register(pseudo, password);
         setMessage("Compte créé avec succès !");
@@ -40,7 +38,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    // ton JSX ici (inchangé)
     <div> {/* ... */} </div>
   );
 };

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import authService from "./services/auth.service";
+import Header from "./components/header";
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const token = authService.getToken();
@@ -17,50 +18,32 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={loggedIn ? <Navigate to="/dashboard" /> : <AuthPage onLoginSuccess={() => setLoggedIn(true)} />}
-        />
+    <Routes>
+      <Route
+        path="/"
+        element={
+          loggedIn ? (
+            <Navigate to="/dashboard" />
+          ) : (
+            <AuthPage onLoginSuccess={() => setLoggedIn(true)} />
+          )
+        }
+      />
 
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <>
+              <Header />
               <Dashboard onLogout={() => setLoggedIn(false)} />
-            </PrivateRoute>
-          }
-        />
-        {/* <Route
-          path="/dashboard/expenses"
-          element={
-            <PrivateRoute>
-              <Expenses />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/dashboard/budgets"
-          element={
-            <PrivateRoute>
-              <Budgets />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/dashboard/categories"
-          element={
-            <PrivateRoute>
-              <Categories />
-            </PrivateRoute>
-          }
-        /> */}
+            </>
+          </PrivateRoute>
+        }
+      />
 
-        {/* fallback */}
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </Router>
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
   );
 }
 
