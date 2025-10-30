@@ -1,16 +1,14 @@
-// src/pages/Dashboard.tsx
 import React from "react";
-import { Typography, Button, Box } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Box, Typography, Button } from "@mui/material";
+import authService from "../services/auth.service";
 
-const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
+// 1️⃣ Définir les props attendues
+interface DashboardProps {
+  onLogout: () => void;
+}
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
-
+// 2️⃣ Typage du composant avec React.FC<Props>
+const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4">Bienvenue sur le Dashboard 🎉</Typography>
@@ -18,7 +16,10 @@ const Dashboard: React.FC = () => {
         variant="contained"
         color="secondary"
         sx={{ mt: 2 }}
-        onClick={handleLogout}
+        onClick={() => {
+          authService.logout();
+          onLogout(); // update l’état parent
+        }}
       >
         Se déconnecter
       </Button>
