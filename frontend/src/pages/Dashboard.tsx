@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { useNavigate } from "react-router-dom";
 import GenericPie from "../components/GenericPie";
 import type { ChartDatum } from "../interfaces/chartDatum";
 import budgetService from "../services/budget.service";
@@ -8,6 +10,7 @@ import { prepareChartData } from "../helpers/prepareChartData";
 import categoryService from "../services/category.service";
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [mainData, setMainData] = useState<ChartDatum[]>([]);
   const [middleData, setMiddleData] = useState<ChartDatum[]>([]);
   const [outerData, setOuterData] = useState<ChartDatum[]>([]);

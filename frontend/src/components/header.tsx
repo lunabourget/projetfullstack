@@ -97,7 +97,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
               sx={{ color: tab === "/cgu" ? "#f54e00ff" : "#fff", fontWeight: tab === "/cgu" ? "bold" : "normal" }}
               onClick={() => navigate("/cgu")}
             >
-              Catégories
+              CGU
             </Button>
 
             <IconButton color="inherit" onClick={handleMenuOpen}>
