@@ -14,7 +14,7 @@ const RedirectIfAuthenticated = ({ children }: { children: JSX.Element }) => {
   const navigate = useNavigate();
   useEffect(() => {
     const token = authService.getToken();
-    if (token) navigate("/dashboard");
+    if (token) navigate("/home");
   }, [navigate]);
   return children;
 };
@@ -32,7 +32,7 @@ function App() {
           }
         />
         <Route
-          path="/dashboard"
+          path="/home"
           element={
             <PrivateRoute>
                 <Dashboard />
