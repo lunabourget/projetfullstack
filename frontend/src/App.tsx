@@ -37,27 +37,33 @@ function App() {
         element={
           <PrivateRoute>
             <>
-              <Header />
-              <Dashboard onLogout={() => setLoggedIn(false)} />
+              <Header onLogout={() => setLoggedIn(false)} />
+              <Dashboard />
             </>
           </PrivateRoute>
         }
       />
 
     <Route
-  path="/expenses"
-  element={
-    <PrivateRoute>
-      <Expenses />
-    </PrivateRoute>
-  }
+      path="/expenses"
+      element={
+        <PrivateRoute>
+          <>
+            <Header onLogout={() => setLoggedIn(false)} />
+            <Expenses />
+          </>
+        </PrivateRoute>
+      }
 />
 
 <Route
   path="/budgets"
   element={
     <PrivateRoute>
-      <Budgets />
+      <>
+        <Header onLogout={() => setLoggedIn(false)} />
+        <Budgets />
+      </>
     </PrivateRoute>
   }
 />

@@ -89,92 +89,139 @@ const Expenses: React.FC = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: "auto", mt: 6 }}>
-      <Typography variant="h4" mb={2}>
-        Dépenses
-      </Typography>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#2C2C2C', p: 4 }}>
+      <Box sx={{ maxWidth: 800, mx: "auto" }}>
+        <Typography variant="h4" mb={2} sx={{ color: '#fff' }}>
+          Dépenses
+        </Typography>
 
-      <form onSubmit={handleSubmit}>
-        <TextField
-          select
-          label="Budget (optionnel)"
-          fullWidth
-          margin="normal"
-          value={budgetId}
-          onChange={(e) => setBudgetId(e.target.value)}
-        >
-          <MenuItem value="">Aucun</MenuItem>
-          {budgets.map((b) => (
-            <MenuItem key={b.id} value={b.id}>
-              Budget {b.id} — {b.amount} €
-            </MenuItem>
-          ))}
-        </TextField>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            select
+            label="Budget (optionnel)"
+            fullWidth
+            margin="normal"
+            value={budgetId}
+            onChange={(e) => setBudgetId(e.target.value)}
+            sx={{
+              '& .MuiInputLabel-root': { color: '#bbb' },
+              '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': { borderColor: '#555' },
+                '&:hover fieldset': { borderColor: '#777' },
+                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+              },
+            }}
+          >
+            <MenuItem value="">Aucun</MenuItem>
+            {budgets.map((b) => (
+              <MenuItem key={b.id} value={b.id}>
+                Budget {b.id} — {b.amount} €
+              </MenuItem>
+            ))}
+          </TextField>
 
-        <TextField
-          label="Montant (€)"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
+          <TextField
+            label="Montant (€)"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            sx={{
+              '& .MuiInputLabel-root': { color: '#bbb' },
+              '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': { borderColor: '#555' },
+                '&:hover fieldset': { borderColor: '#777' },
+                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+              },
+            }}
+          />
 
-        <TextField
-          label="Description"
-          fullWidth
-          margin="normal"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+          <TextField
+            label="Description"
+            fullWidth
+            margin="normal"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            sx={{
+              '& .MuiInputLabel-root': { color: '#bbb' },
+              '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': { borderColor: '#555' },
+                '&:hover fieldset': { borderColor: '#777' },
+                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+              },
+            }}
+          />
 
-        <TextField
-          label="Date"
-          type="date"
-          fullWidth
-          margin="normal"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+          <TextField
+            label="Date"
+            type="date"
+            fullWidth
+            margin="normal"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            sx={{
+              '& .MuiInputLabel-root': { color: '#bbb' },
+              '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': { borderColor: '#555' },
+                '&:hover fieldset': { borderColor: '#777' },
+                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+              },
+            }}
+          />
 
-        <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
-          {editingId ? "Mettre à jour" : "Ajouter une dépense"}
-        </Button>
-      </form>
+          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
+            {editingId ? "Mettre à jour" : "Ajouter une dépense"}
+          </Button>
+        </form>
 
-      <Typography variant="h6" mt={5} mb={1}>
-        Liste des dépenses
-      </Typography>
+        <Typography variant="h6" mt={5} mb={1} sx={{ color: '#fff' }}>
+          Liste des dépenses
+        </Typography>
 
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Budget</TableCell>
-            <TableCell>Montant (€)</TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {expenses.map((exp) => (
-            <TableRow key={exp.id}>
-              <TableCell>{exp.budget_id || "—"}</TableCell>
-              <TableCell>{exp.amount}</TableCell>
-              <TableCell>{exp.description}</TableCell>
-              <TableCell>{new Date(exp.date).toLocaleDateString()}</TableCell>
-              <TableCell>
-                <IconButton onClick={() => handleEdit(exp)}>
-                  <Edit />
-                </IconButton>
-                <IconButton onClick={() => handleDelete(exp.id)}>
-                  <Delete color="error" />
-                </IconButton>
-              </TableCell>
+        <Table sx={{ 
+          '& .MuiTableCell-root': { 
+            color: '#fff',
+            borderBottom: '1px solid #444',
+          }
+        }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Budget</TableCell>
+              <TableCell>Montant (€)</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {expenses.map((exp) => (
+              <TableRow key={exp.id}>
+                <TableCell>{exp.budget_id || "—"}</TableCell>
+                <TableCell>{exp.amount}</TableCell>
+                <TableCell>{exp.description}</TableCell>
+                <TableCell>{new Date(exp.date).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleEdit(exp)} sx={{ color: '#90caf9' }}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(exp.id)}>
+                    <Delete color="error" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Box>
     </Box>
   );
 };

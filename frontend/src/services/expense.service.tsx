@@ -1,14 +1,20 @@
 // src/services/expense.service.ts
 import authService from "./auth.service";
+import type { Expense } from "../interfaces/Expense";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api/expenses";
+const API_URL = (process.env.REACT_APP_API_URL || "http://localhost:5000") + "/api/expenses";
 
 const headers = () => ({
   "Content-Type": "application/json",
   Authorization: `Bearer ${authService.getToken()}`,
 });
 
-const createExpense = async (budget_id: number | null, amount: number, description: string, date: string) => {
+const createExpense = async (
+  budget_id: number | null,
+  amount: number,
+  description: string,
+  date: string
+): Promise<Expense> => {
   const res = await fetch(API_URL, {
     method: "POST",
     headers: headers(),
@@ -19,14 +25,14 @@ const createExpense = async (budget_id: number | null, amount: number, descripti
   return data;
 };
 
-const getExpenses = async () => {
+const getExpenses = async (): Promise<Expense[]> => {
   const res = await fetch(API_URL, { headers: headers() });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "Erreur de récupération des dépenses");
   return data;
 };
 
-const updateExpense = async (id: number, updates: any) => {
+const updateExpense = async (id: number, updates: Partial<Expense>): Promise<Expense> => {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: headers(),
@@ -37,7 +43,7 @@ const updateExpense = async (id: number, updates: any) => {
   return data;
 };
 
-const deleteExpense = async (id: number) => {
+const deleteExpense = async (id: number): Promise<{ message: string } & Partial<Expense>> => {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
     headers: headers(),
@@ -47,4 +53,5 @@ const deleteExpense = async (id: number) => {
   return data;
 };
 
-export default { createExpense, getExpenses, updateExpense, deleteExpense };
+const expenseService = { createExpense, getExpenses, updateExpense, deleteExpense };
+export default expenseService;

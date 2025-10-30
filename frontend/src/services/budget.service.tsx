@@ -1,21 +1,22 @@
 // src/services/budget.service.ts
 import authService from "./auth.service";
+import type { Budget } from "../interfaces/Budget";
 
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api/budgets";
+const API_URL = (process.env.REACT_APP_API_URL || "http://localhost:5000") + "/api/budgets";
 
 const headers = () => ({
   "Content-Type": "application/json",
   Authorization: `Bearer ${authService.getToken()}`,
 });
 
-const getBudgets = async () => {
+const getBudgets = async (): Promise<Budget[]> => {
   const res = await fetch(API_URL, { headers: headers() });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "Erreur de récupération des budgets");
   return data;
 };
 
-const createBudget = async (category_id: number | null, amount: number) => {
+const createBudget = async (category_id: number | null, amount: number): Promise<Budget> => {
   const res = await fetch(API_URL, {
     method: "POST",
     headers: headers(),
@@ -26,7 +27,7 @@ const createBudget = async (category_id: number | null, amount: number) => {
   return data;
 };
 
-const updateBudget = async (id: number, updates: any) => {
+const updateBudget = async (id: number, updates: Partial<Budget>): Promise<Budget> => {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: headers(),
@@ -37,7 +38,7 @@ const updateBudget = async (id: number, updates: any) => {
   return data;
 };
 
-const deleteBudget = async (id: number) => {
+const deleteBudget = async (id: number): Promise<{ message: string } & Partial<Budget>> => {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
     headers: headers(),
@@ -47,4 +48,5 @@ const deleteBudget = async (id: number) => {
   return data;
 };
 
-export default { getBudgets, createBudget, updateBudget, deleteBudget };
+const budgetService = { getBudgets, createBudget, updateBudget, deleteBudget };
+export default budgetService;

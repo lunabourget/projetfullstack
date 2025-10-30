@@ -77,71 +77,98 @@ const Budgets: React.FC = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: "auto", mt: 6 }}>
-      <Typography variant="h4" mb={2}>
-        Budgets
-      </Typography>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#2C2C2C', p: 4 }}>
+      <Box sx={{ maxWidth: 800, mx: "auto" }}>
+        <Typography variant="h4" mb={2} sx={{ color: '#fff' }}>
+          Budgets
+        </Typography>
 
-      <form onSubmit={handleSubmit}>
-        <TextField
-          select
-          label="Catégorie (optionnelle)"
-          fullWidth
-          margin="normal"
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-        >
-          <MenuItem value="">Aucune</MenuItem>
-          {categories.map((c) => (
-            <MenuItem key={c.id} value={c.id}>
-              {c.name || `Catégorie ${c.id}`}
-            </MenuItem>
-          ))}
-        </TextField>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            select
+            label="Catégorie (optionnelle)"
+            fullWidth
+            margin="normal"
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+            sx={{
+              '& .MuiInputLabel-root': { color: '#bbb' },
+              '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': { borderColor: '#555' },
+                '&:hover fieldset': { borderColor: '#777' },
+                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+              },
+            }}
+          >
+            <MenuItem value="">Aucune</MenuItem>
+            {categories.map((c) => (
+              <MenuItem key={c.id} value={c.id}>
+                {c.name || `Catégorie ${c.id}`}
+              </MenuItem>
+            ))}
+          </TextField>
 
-        <TextField
-          label="Montant (€)"
-          type="number"
-          fullWidth
-          margin="normal"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
+          <TextField
+            label="Montant (€)"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            sx={{
+              '& .MuiInputLabel-root': { color: '#bbb' },
+              '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': { borderColor: '#555' },
+                '&:hover fieldset': { borderColor: '#777' },
+                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+              },
+            }}
+          />
 
-        <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
-          {editingId ? "Mettre à jour" : "Ajouter un budget"}
-        </Button>
-      </form>
+          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
+            {editingId ? "Mettre à jour" : "Ajouter un budget"}
+          </Button>
+        </form>
 
-      <Typography variant="h6" mt={5} mb={1}>
-        Liste des budgets
-      </Typography>
+        <Typography variant="h6" mt={5} mb={1} sx={{ color: '#fff' }}>
+          Liste des budgets
+        </Typography>
 
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Catégorie</TableCell>
-            <TableCell>Montant (€)</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {budgets.map((b) => (
-            <TableRow key={b.id}>
-              <TableCell>{b.category_id || "—"}</TableCell>
-              <TableCell>{b.amount}</TableCell>
-              <TableCell>
-                <IconButton onClick={() => handleEdit(b)}>
-                  <Edit />
-                </IconButton>
-                <IconButton onClick={() => handleDelete(b.id)}>
-                  <Delete color="error" />
-                </IconButton>
-              </TableCell>
+        <Table sx={{ 
+          '& .MuiTableCell-root': { 
+            color: '#fff',
+            borderBottom: '1px solid #444',
+          }
+        }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>Catégorie</TableCell>
+              <TableCell>Montant (€)</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {budgets.map((b) => (
+              <TableRow key={b.id}>
+                <TableCell>{b.category_id || "—"}</TableCell>
+                <TableCell>{b.amount}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleEdit(b)} sx={{ color: '#90caf9' }}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(b.id)}>
+                    <Delete color="error" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Box>
     </Box>
   );
 };

@@ -11,20 +11,45 @@ import {
   useMediaQuery,
   useTheme,
   Paper,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import PaidIcon from "@mui/icons-material/Paid";
 import PieChartIcon from "@mui/icons-material/PieChart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate, useLocation } from "react-router-dom";
+import authService from "../services/auth.service";
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onLogout: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const location = useLocation();
 
   const [tab, setTab] = React.useState(location.pathname);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    authService.logout();
+    handleMenuClose();
+    onLogout();
+    navigate("/");
+  };
 
   React.useEffect(() => {
     setTab(location.pathname);
@@ -75,9 +100,27 @@ const Header: React.FC = () => {
               Catégories
             </Button>
 
-            <IconButton color="inherit">
+            <IconButton color="inherit" onClick={handleMenuOpen}>
               <AccountCircleIcon sx={{ color: "#fff" }} />
             </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleMenuClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+            >
+              <MenuItem onClick={handleLogout}>
+                <LogoutIcon sx={{ mr: 1 }} />
+                Se déconnecter
+              </MenuItem>
+            </Menu>
           </Box>
         </Toolbar>
       </AppBar>
@@ -107,9 +150,27 @@ return (
           BudJet !
         </Typography>
 
-        <IconButton color="inherit">
+        <IconButton color="inherit" onClick={handleMenuOpen}>
           <AccountCircleIcon sx={{ color: "#fff" }} />
         </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <MenuItem onClick={handleLogout}>
+            <LogoutIcon sx={{ mr: 1 }} />
+            Se déconnecter
+          </MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
 
