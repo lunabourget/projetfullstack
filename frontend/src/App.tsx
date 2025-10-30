@@ -1,34 +1,46 @@
-import React from 'react';
-import './App.css';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import AuthPage from "./pages/AuthPage";
+import Dashboard from "./pages/Dashboard";
+import authService from "./services/auth.service";
 
-const theme = createTheme({
-  palette: {
-    mode: 'light'
-  }
-});
-
-const App: React.FC = () => {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Container maxWidth="md">
-        <Box sx={{ textAlign: 'center', mt: 6 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            Cou
-          </Typography>
-          <Button variant="contained" color="primary">
-            Commencer
-          </Button>
-        </Box>
-      </Container>
-    </ThemeProvider>
-  );
+const PrivateRoute = ({ children }: { children: JSX.Element }) => {
+  const token = authService.getToken();
+  return token ? children : <Navigate to="/" />;
 };
+
+const RedirectIfAuthenticated = ({ children }: { children: JSX.Element }) => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = authService.getToken();
+    if (token) navigate("/dashboard");
+  }, [navigate]);
+  return children;
+};
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <RedirectIfAuthenticated>
+              <AuthPage />
+            </RedirectIfAuthenticated>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </Router>
+  );
+}
 
 export default App;
