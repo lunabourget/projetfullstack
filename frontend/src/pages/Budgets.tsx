@@ -154,7 +154,7 @@ const Budgets: React.FC = () => {
           <TableBody>
             {budgets.map((b) => (
               <TableRow key={b.id}>
-                <TableCell>{b.category_id || "—"}</TableCell>
+                <TableCell>{b.category_name || "—"}</TableCell>
                 <TableCell>{b.amount}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleEdit(b)} sx={{ color: '#90caf9' }}>

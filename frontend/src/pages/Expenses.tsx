@@ -19,6 +19,7 @@ import authService from "../services/auth.service";
 
 const Expenses: React.FC = () => {
   const [budgets, setBudgets] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [expenses, setExpenses] = useState<any[]>([]);
   const [budgetId, setBudgetId] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
@@ -35,6 +36,15 @@ const Expenses: React.FC = () => {
     setBudgets(data);
   };
 
+  const loadCategories = async () => {
+    const token = authService.getToken();
+    const res = await fetch("http://localhost:5000/api/categories", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    setCategories(data);
+  };
+
   const loadExpenses = async () => {
     const data = await expenseService.getExpenses();
     setExpenses(data);
@@ -42,6 +52,7 @@ const Expenses: React.FC = () => {
 
   useEffect(() => {
     loadBudgets();
+    loadCategories();
     loadExpenses();
   }, []);
 
@@ -88,6 +99,20 @@ const Expenses: React.FC = () => {
     }
   };
 
+  const getCategoryNameForExpense = (budgetId: number | null) => {
+    if (!budgetId) return "—";
+    const budget = budgets.find((b) => b.id === budgetId);
+    if (!budget) return "—";
+    const category = categories.find((c) => c.id === budget.category_id);
+    return category ? category.name : "—";
+  };
+
+  const getBudgetLabel = (budget: any) => {
+    const category = categories.find((c) => c.id === budget.category_id);
+    const categoryName = category ? category.name : "Inconnu";
+    return `Budget ${categoryName} — ${budget.amount} €`;
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#2C2C2C', p: 4 }}>
       <Box sx={{ maxWidth: 800, mx: "auto" }}>
@@ -117,7 +142,7 @@ const Expenses: React.FC = () => {
             <MenuItem value="">Aucun</MenuItem>
             {budgets.map((b) => (
               <MenuItem key={b.id} value={b.id}>
-                Budget {b.id} — {b.amount} €
+                {getBudgetLabel(b)}
               </MenuItem>
             ))}
           </TextField>
@@ -205,7 +230,7 @@ const Expenses: React.FC = () => {
           <TableBody>
             {expenses.map((exp) => (
               <TableRow key={exp.id}>
-                <TableCell>{exp.budget_id || "—"}</TableCell>
+                <TableCell>{getCategoryNameForExpense(exp.budget_id)}</TableCell>
                 <TableCell>{exp.amount}</TableCell>
                 <TableCell>{exp.description}</TableCell>
                 <TableCell>{new Date(exp.date).toLocaleDateString()}</TableCell>

@@ -3,11 +3,13 @@ import { Box, Typography, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import GenericPie from "../components/GenericPie";
+import BudgetBarChart from "../components/BudgetBarChart";
 import type { ChartDatum } from "../interfaces/chartDatum";
 import budgetService from "../services/budget.service";
 import expenseService from "../services/expense.service";
 import { prepareChartData } from "../helpers/prepareChartData";
 import categoryService from "../services/category.service";
+
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +18,9 @@ const Dashboard: React.FC = () => {
   const [outerData, setOuterData] = useState<ChartDatum[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [budgets, setBudgets] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [expenses, setExpenses] = useState<any[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -23,17 +28,20 @@ const Dashboard: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const [categories, budgets, expenses] = await Promise.all([
+        const [categoriesRes, budgetsRes, expensesRes] = await Promise.all([
           categoryService.getCategories(),
           budgetService.getBudgets(),
           expenseService.getExpenses(),
         ]);
 
         if (!isMounted) return;
+        setCategories(categoriesRes);
+        setBudgets(budgetsRes);
+        setExpenses(expensesRes);
         const { mainData, middleData, outerData } = prepareChartData(
-          categories,
-          budgets,
-          expenses
+          categoriesRes,
+          budgetsRes,
+          expensesRes
         );
         setMainData(mainData);
         setMiddleData(middleData);
@@ -44,6 +52,9 @@ const Dashboard: React.FC = () => {
         setMainData([]);
         setMiddleData([]);
         setOuterData([]);
+        setBudgets([]);
+        setCategories([]);
+        setExpenses([]);
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -59,27 +70,32 @@ const Dashboard: React.FC = () => {
   );
 
   return (
-    <Box sx={{ p: 4, minHeight: '100vh', bgcolor: '#2C2C2C' }}>
-      <Typography variant="h4" sx={{ color: '#fff' }}>Vos Dernières dépenses</Typography>
+    <Box sx={{ p: 4, bgcolor: '#2C2C2C' }}>
+      <Typography variant="h4" sx={{ color: '#fff' }}>Vos dépenses</Typography>
 
-      <Box sx={{ mt: 3, bgcolor: 'transparent' }}>
-        {error && (
-          <Typography color="error" sx={{ mb: 2 }}>
-            {error}
-          </Typography>
-        )}
-        <GenericPie
-          title={loading ? "Chargement..." : "Dépenses par catégorie"}
-          centerLabel={`${totalEuros.toFixed(0)} €`}
-          mainData={mainData}
-          middleData={middleData}
-          outerData={outerData}
-        />
-        {!loading && mainData.length === 0 && (
-          <Typography sx={{ mt: 2, color: '#bbb' }}>
-            Aucune donnée pour le moment. Ajoutez des budgets et des dépenses pour voir le graphique.
-          </Typography>
-        )}
+      <Box sx={{ mt: 3, bgcolor: 'transparent', display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, alignItems: 'stretch', justifyContent: 'flex-start' }}>
+        <Box sx={{ flex: '0 0 auto', minWidth: 0 }}>
+          {error && (
+            <Typography color="error" sx={{ mb: 2 }}>
+              {error}
+            </Typography>
+          )}
+          <GenericPie
+            title={loading ? "Chargement..." : "Dépenses par catégorie"}
+            centerLabel={`${totalEuros.toFixed(0)} €`}
+            mainData={mainData}
+            middleData={middleData}
+            outerData={outerData}
+          />
+          {!loading && mainData.length === 0 && (
+            <Typography sx={{ mt: 2, color: '#bbb' }}>
+              Aucune donnée pour le moment. Ajoutez des budgets et des dépenses pour voir le graphique.
+            </Typography>
+          )}
+        </Box>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <BudgetBarChart budgets={budgets} categories={categories} expenses={expenses} />
+        </Box>
       </Box>
 
       <Fab

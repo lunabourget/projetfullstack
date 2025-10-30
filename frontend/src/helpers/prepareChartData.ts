@@ -9,7 +9,6 @@ export function prepareChartData(
   budgets: Budget[],
   expenses: Expense[]
 ): { mainData: ChartDatum[]; middleData: ChartDatum[]; outerData: ChartDatum[] } {
-  // Cercle 1 : catégories
   const mainData: ChartDatum[] = categories.map((cat) => {
     const total = budgets
       .filter((b) => b.category_id === cat.id)
@@ -34,40 +33,47 @@ export function prepareChartData(
     d.percentage = totalMain > 0 ? (d.value / totalMain) * 100 : 0;
   }
 
-  // Cercle 2 : budgets
-  const middleData: ChartDatum[] = budgets.map((b) => {
-    const budgetExpenses = expenses
-      .filter((e) => e.budget_id === b.id)
-      .reduce((sum, e) => sum + Number(e.amount), 0);
-    const categoryName = categories.find((c) => c.id === b.category_id)?.name ?? "Unknown";
+  const middleData: ChartDatum[] = [];
+  for (const cat of categories) {
+    const categoryBudgets = budgets
+      .filter((b) => b.category_id === cat.id)
+      .map((b) => {
+        const budgetExpenses = expenses
+          .filter((e) => e.budget_id === b.id)
+          .reduce((sum, e) => sum + Number(e.amount), 0);
 
-    return {
-      id: `budget-${b.id}`,
-      label: `${categoryName} Budget`,
-      value: budgetExpenses,
-      percentage: 0,
-      color: categoryColors[categoryName] || "#ccc",
-    };
-  });
+        return {
+          id: `budget-${b.id}`,
+          label: `${cat.name} Budget`,
+          value: budgetExpenses,
+          percentage: 0,
+          color: categoryColors[cat.name] || "#ccc",
+        };
+      });
+    middleData.push(...categoryBudgets);
+  }
 
   const totalMiddle = middleData.reduce((acc, d) => acc + d.value, 0);
   for (const d of middleData) {
     d.percentage = totalMiddle > 0 ? (d.value / totalMiddle) * 100 : 0;
   }
 
-  // Cercle 3 : dépenses
-  const outerData: ChartDatum[] = expenses.map((e) => {
-    const budget = budgets.find((b) => b.id === e.budget_id);
-    const categoryName = categories.find((c) => c.id === budget?.category_id)?.name ?? "Unknown";
-
-    return {
-      id: `expense-${e.id}`,
-      label: e.description || "Dépense",
-      value: Number(e.amount),
-      percentage: 0,
-      color: categoryColors[categoryName] || "#ccc",
-    };
-  });
+  const outerData: ChartDatum[] = [];
+  for (const cat of categories) {
+    const categoryBudgets = budgets.filter((b) => b.category_id === cat.id);
+    for (const budget of categoryBudgets) {
+      const budgetExpenses = expenses
+        .filter((e) => e.budget_id === budget.id)
+        .map((e) => ({
+          id: `expense-${e.id}`,
+          label: e.description || "Dépense",
+          value: Number(e.amount),
+          percentage: 0,
+          color: categoryColors[cat.name] || "#ccc",
+        }));
+      outerData.push(...budgetExpenses);
+    }
+  }
 
   const totalOuter = outerData.reduce((acc, d) => acc + d.value, 0);
   for (const d of outerData) {
