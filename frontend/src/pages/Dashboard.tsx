@@ -81,6 +81,25 @@ const Dashboard: React.FC = () => {
           </Typography>
         )}
       </Box>
+
+      <Fab
+        variant="extended"
+        aria-label="add"
+        sx={{
+          position: 'fixed',
+          bottom: 80,
+          right: 40,
+          backgroundColor: '#f54e00ff',
+          color: '#fff',
+          '&:hover': {
+            backgroundColor: '#d94400',
+          },
+        }}
+        onClick={() => navigate('/expenses')}
+      >
+        <AddIcon sx={{ mr: 1 }} />
+        Nouvelle dépense
+      </Fab>
     </Box>
   );
 };
