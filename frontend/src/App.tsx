@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
-import authService from "./services/auth.service";
 import Header from "./components/header";
+import authService from "./services/auth.service";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = authService.getToken();
@@ -11,18 +11,23 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 const RedirectIfAuthenticated = ({ children }: { children: JSX.Element }) => {
-  const navigate = useNavigate();
-  useEffect(() => {
-    const token = authService.getToken();
-    if (token) navigate("/home");
-  }, [navigate]);
-  return children;
+  const token = authService.getToken();
+  return token ? <Navigate to="/home" /> : children;
 };
+
+// Layout pour les routes protégées avec header
+const AppLayout: React.FC = () => (
+  <>
+    <Header />
+    <Outlet />
+  </>
+);
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Page login */}
         <Route
           path="/"
           element={
@@ -31,27 +36,33 @@ function App() {
             </RedirectIfAuthenticated>
           }
         />
+
+        {/* Route principale après login */}
         <Route
           path="/home"
           element={
             <PrivateRoute>
-                <Dashboard />
+              <Dashboard />
             </PrivateRoute>
           }
         />
+
+        {/* Sous-routes protégées avec header */}
         <Route
-          path="/app/*"
+          path="/app"
           element={
             <PrivateRoute>
-              <>
-                <Header />
-                <Routes>
-                  <Route path="dashboard" element={<Dashboard />} />
-                </Routes>
-              </>
+              <AppLayout />
             </PrivateRoute>
           }
-        />
+        >
+          {/* Ici les routes enfants */}
+          <Route path="dashboard" element={<Dashboard />} />
+          {/* tu peux ajouter d'autres routes : /app/settings, /app/profile ... */}
+        </Route>
+
+        {/* Redirection par défaut si aucune route ne matche */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );
