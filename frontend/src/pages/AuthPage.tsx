@@ -7,7 +7,7 @@ interface AuthPageProps {
 }
 
 const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(true); // true = login, false = inscription
   const [pseudo, setPseudo] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,14 +24,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       if (isLogin) {
         await authService.login(pseudo, password);
         setSuccess("Connexion réussie !");
-        onLoginSuccess(); // met à jour l'état parent
+        onLoginSuccess(); // met à jour l’état parent
       } else {
         await authService.register(pseudo, password);
         setSuccess("Compte créé avec succès !");
-        setIsLogin(true); // revenir à la page login
+        setIsLogin(true); // revenir à login après inscription
       }
     } catch (err: any) {
-      // Selon ton backend, on peut récupérer err.response.data.error
       setError(err.message || "Une erreur est survenue.");
     } finally {
       setLoading(false);
@@ -105,7 +104,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
           setSuccess(null);
         }}
       >
-        {isLogin ? "Pas encore de compte ? Créer un compte" : "Déjà un compte ? Se connecter"}
+        {isLogin
+          ? "Pas encore de compte ? Créer un compte"
+          : "Déjà un compte ? Se connecter"}
       </Button>
     </Box>
   );
