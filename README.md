@@ -6,7 +6,7 @@ docker
 
 ## __2. lancement__
 
-- télécharger les fichiers sources du projet
+- cloner le projet
 - dans le dossier `projetfullstack`, exécuter la commande : `docker compose up --build -d`
 
 Vous pouvez désormais accéder à l'interface de test des endpoints de l'API à [cette adresse](http://localhost:5000/api/docs), et à l'application web en elle même [ici](http://localhost:3000).
