@@ -1,21 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import Header from "./components/header";
 import authService from "./services/auth.service";
 
-const PrivateRoute = ({ children }: { children: JSX.Element }) => {
-  const token = authService.getToken();
-  return token ? children : <Navigate to="/" />;
-};
-
-const RedirectIfAuthenticated = ({ children }: { children: JSX.Element }) => {
-  const token = authService.getToken();
-  return token ? <Navigate to="/home" /> : children;
-};
-
-// Layout pour les routes protégées avec header
 const AppLayout: React.FC = () => (
   <>
     <Header />
@@ -23,7 +12,22 @@ const AppLayout: React.FC = () => (
   </>
 );
 
+const PrivateRoute: React.FC<{ children: JSX.Element; loggedIn: boolean }> = ({ children, loggedIn }) => {
+  return loggedIn ? children : <Navigate to="/" />;
+};
+
+const RedirectIfAuthenticated: React.FC<{ children: JSX.Element; loggedIn: boolean }> = ({ children, loggedIn }) => {
+  return loggedIn ? <Navigate to="/home" /> : children;
+};
+
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = authService.getToken();
+    setLoggedIn(!!token);
+  }, []);
+
   return (
     <Router>
       <Routes>
@@ -31,37 +35,37 @@ function App() {
         <Route
           path="/"
           element={
-            <RedirectIfAuthenticated>
-              <AuthPage />
+            <RedirectIfAuthenticated loggedIn={loggedIn}>
+              <AuthPage onLoginSuccess={() => setLoggedIn(true)} />
             </RedirectIfAuthenticated>
           }
         />
 
-        {/* Route principale après login */}
+        {/* Page principale après login */}
         <Route
           path="/home"
           element={
-            <PrivateRoute>
-              <Dashboard />
+            <PrivateRoute loggedIn={loggedIn}>
+              <Dashboard onLogout={() => setLoggedIn(false)} />
             </PrivateRoute>
           }
         />
 
-        {/* Sous-routes protégées avec header */}
+        {/* Layout pour les routes protégées avec Header */}
         <Route
           path="/app"
           element={
-            <PrivateRoute>
+            <PrivateRoute loggedIn={loggedIn}>
               <AppLayout />
             </PrivateRoute>
           }
         >
-          {/* Ici les routes enfants */}
-          <Route path="dashboard" element={<Dashboard />} />
-          {/* tu peux ajouter d'autres routes : /app/settings, /app/profile ... */}
+          {/* Routes enfants */}
+          <Route path="dashboard" element={<Dashboard onLogout={() => setLoggedIn(false)} />} />
+          {/* autres routes protégées ici */}
         </Route>
 
-        {/* Redirection par défaut si aucune route ne matche */}
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
