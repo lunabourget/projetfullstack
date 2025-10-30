@@ -13,11 +13,15 @@ const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
 };
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null); // null = en cours de vérification
 
   useEffect(() => {
     setLoggedIn(!!authService.getToken());
   }, []);
+
+  if (loggedIn === null) {
+    return <div>Chargement...</div>; // ou un loader MUI si tu veux
+  }
 
   return (
     <Routes>
@@ -44,25 +48,29 @@ function App() {
         }
       />
 
-    <Route
-  path="/expenses"
-  element={
-    <PrivateRoute>
-      <Expenses />
-    </PrivateRoute>
-  }
-/>
+      <Route
+        path="/expenses"
+        element={
+          <PrivateRoute>
+            <>
+              <Header />
+              <Expenses />
+            </>
+          </PrivateRoute>
+        }
+      />
 
-<Route
-  path="/budgets"
-  element={
-    <PrivateRoute>
-      <Budgets />
-    </PrivateRoute>
-  }
-/>
-
-
+      <Route
+        path="/budgets"
+        element={
+          <PrivateRoute>
+            <>
+              <Header />
+              <Budgets />
+            </>
+          </PrivateRoute>
+        }
+      />
 
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
