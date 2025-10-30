@@ -24,11 +24,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
       if (isLogin) {
         await authService.login(pseudo, password);
         setSuccess("Connexion réussie !");
-        onLoginSuccess(); // met à jour l’état parent
+        onLoginSuccess();
       } else {
         await authService.register(pseudo, password);
         setSuccess("Compte créé avec succès !");
-        setIsLogin(true); // revenir à login après inscription
+        setIsLogin(true);
       }
     } catch (err: any) {
       setError(err.message || "Une erreur est survenue.");
@@ -44,12 +44,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
         mx: "auto",
         mt: 10,
         p: 3,
-        border: "1px solid #ccc",
         borderRadius: 2,
         boxShadow: 2,
+        minHeight: '100vh',
+        bgcolor: '#2C2C2C',
       }}
     >
-      <Typography variant="h4" mb={2} textAlign="center">
+      <Typography variant="h4" mb={2} textAlign="center" sx={{ color: '#fff' }}>
         {isLogin ? "Connexion" : "Créer un compte"}
       </Typography>
 
@@ -73,6 +74,17 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
           variant="outlined"
           value={pseudo}
           onChange={(e) => setPseudo(e.target.value)}
+          sx={{
+            '& .MuiInputLabel-root': { color: '#ccc' },
+            '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+            '& .MuiOutlinedInput-root': {
+              color: '#fff',
+              '& fieldset': { borderColor: '#555' },
+              '&:hover fieldset': { borderColor: '#888' },
+              '&.Mui-focused fieldset': { borderColor: '#fff' }
+            },
+            input: { color: '#fff' }
+          }}
         />
         <TextField
           label="Mot de passe"
@@ -82,6 +94,17 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
           variant="outlined"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          sx={{
+            '& .MuiInputLabel-root': { color: '#ccc' },
+            '& .MuiInputLabel-root.Mui-focused': { color: '#fff' },
+            '& .MuiOutlinedInput-root': {
+              color: '#fff',
+              '& fieldset': { borderColor: '#555' },
+              '&:hover fieldset': { borderColor: '#888' },
+              '&.Mui-focused fieldset': { borderColor: '#fff' }
+            },
+            input: { color: '#fff' }
+          }}
         />
 
         <Button

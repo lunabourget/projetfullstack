@@ -50,26 +50,26 @@ const Header: React.FC = () => {
           </Box>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <IconButton onClick={() => navigate("/")} color="inherit">
-              <HomeIcon sx={{ color: "#fff" }} />
+            <IconButton onClick={() => navigate("/")} color="inherit" sx={{ color: tab === "/" ? "#f54e00ff" : "#fff" }}>
+              <HomeIcon />
             </IconButton>
             <Button
               color="inherit"
-              sx={{ color: "#fff" }}
+              sx={{ color: tab === "/depenses" ? "#9a00b9ff" : "#fff", fontWeight: tab === "/depenses" ? "bold" : "normal" }}
               onClick={() => navigate("/depenses")}
             >
               Dépenses
             </Button>
             <Button
               color="inherit"
-              sx={{ color: "#fff" }}
+              sx={{ color: tab === "/budgets" ? "#690000ff" : "#fff", fontWeight: tab === "/budgets" ? "bold" : "normal" }}
               onClick={() => navigate("/budgets")}
             >
               Budgets
             </Button>
             <Button
               color="inherit"
-              sx={{ color: "#fff" }}
+              sx={{ color: tab === "/categories" ? "#f54e00ff" : "#fff", fontWeight: tab === "/categories" ? "bold" : "normal" }}
               onClick={() => navigate("/categories")}
             >
               Catégories
