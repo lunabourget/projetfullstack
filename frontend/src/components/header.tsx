@@ -151,11 +151,11 @@ return (
 
         <BottomNavigationAction
           label="Dépenses"
-          value="/depenses"
+          value="/expenses"
           icon={<PaidIcon />}
           sx={{
             color: "#fff",
-            backgroundColor: tab === "/depenses" ? "#9a00b9ff" : "transparent",
+            backgroundColor: tab === "/expenses" ? "#9a00b9ff" : "transparent",
             borderRadius: "10px",
             mx: 0.5,
             "&.Mui-selected": {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 import Expenses from "./pages/Expenses";
+import Budgets from "./pages/Budgets";
 import Dashboard from "./pages/Dashboard";
 import authService from "./services/auth.service";
 import Header from "./components/header";
@@ -44,13 +45,23 @@ function App() {
       />
 
     <Route
-  path="/dashboard/expenses"
+  path="/expenses"
   element={
     <PrivateRoute>
       <Expenses />
     </PrivateRoute>
   }
 />
+
+<Route
+  path="/budgets"
+  element={
+    <PrivateRoute>
+      <Budgets />
+    </PrivateRoute>
+  }
+/>
+
 
 
       <Route path="*" element={<Navigate to="/" />} />
