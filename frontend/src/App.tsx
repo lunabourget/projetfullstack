@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 import Expenses from "./pages/Expenses";
 import Budgets from "./pages/Budgets";
+import CGU from "./pages/CGU";
 import Dashboard from "./pages/Dashboard";
 import authService from "./services/auth.service";
 import Header from "./components/header";
@@ -13,11 +14,15 @@ const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
 };
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null); // null = en cours de vérification
 
   useEffect(() => {
     setLoggedIn(!!authService.getToken());
   }, []);
+
+  if (loggedIn === null) {
+    return <div>Chargement...</div>; // ou un loader MUI si tu veux
+  }
 
   return (
     <Routes>
@@ -44,31 +49,33 @@ function App() {
         }
       />
 
-    <Route
-      path="/expenses"
-      element={
-        <PrivateRoute>
-          <>
-            <Header onLogout={() => setLoggedIn(false)} />
-            <Expenses />
-          </>
-        </PrivateRoute>
-      }
-/>
+      <Route
+        path="/expenses"
+        element={
+          <PrivateRoute>
+            <>
+              <Header onLogout={function (): void {
+                throw new Error("Function not implemented.");
+              } } />
+              <Expenses />
+            </>
+          </PrivateRoute>
+        }
+      />
 
-<Route
-  path="/budgets"
-  element={
-    <PrivateRoute>
-      <>
-        <Header onLogout={() => setLoggedIn(false)} />
-        <Budgets />
-      </>
-    </PrivateRoute>
-  }
-/>
-
-
+      <Route
+        path="/budgets"
+        element={
+          <PrivateRoute>
+            <>
+              <Header onLogout={function (): void {
+                throw new Error("Function not implemented.");
+              } } />
+              <Budgets />
+            </>
+          </PrivateRoute>
+        }
+      />
 
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

@@ -80,8 +80,8 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             </IconButton>
             <Button
               color="inherit"
-              sx={{ color: tab === "/depenses" ? "#9a00b9ff" : "#fff", fontWeight: tab === "/depenses" ? "bold" : "normal" }}
-              onClick={() => navigate("/depenses")}
+              sx={{ color: tab === "/expenses" ? "#9a00b9ff" : "#fff", fontWeight: tab === "/expenses" ? "bold" : "normal" }}
+              onClick={() => navigate("/expenses")}
             >
               Dépenses
             </Button>
@@ -94,8 +94,8 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             </Button>
             <Button
               color="inherit"
-              sx={{ color: tab === "/categories" ? "#f54e00ff" : "#fff", fontWeight: tab === "/categories" ? "bold" : "normal" }}
-              onClick={() => navigate("/categories")}
+              sx={{ color: tab === "/cgu" ? "#f54e00ff" : "#fff", fontWeight: tab === "/cgu" ? "bold" : "normal" }}
+              onClick={() => navigate("/cgu")}
             >
               Catégories
             </Button>
