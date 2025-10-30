@@ -12,3 +12,4 @@ router.post('/login', auth_controller_1.login);
 router.put('/:id', auth_1.auth, auth_controller_1.update);
 router.delete('/:id', auth_1.auth, auth_controller_1.remove);
 exports.default = router;
+
