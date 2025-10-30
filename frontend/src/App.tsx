@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
+import AddExpense from "./pages/AddExpense";
 import Dashboard from "./pages/Dashboard";
 import authService from "./services/auth.service";
 import Header from "./components/header";
@@ -41,6 +42,15 @@ function App() {
           </PrivateRoute>
         }
       />
+
+      <Route
+  path="/dashboard/expenses/add"
+  element={
+    <PrivateRoute>
+      <AddExpense />
+    </PrivateRoute>
+  }
+/>
 
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
