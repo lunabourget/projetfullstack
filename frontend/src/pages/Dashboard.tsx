@@ -89,10 +89,10 @@ const Dashboard: React.FC = () => {
           position: 'fixed',
           bottom: 80,
           right: 40,
-          backgroundColor: '#f54e00ff',
+          backgroundColor: '#d000faff',
           color: '#fff',
           '&:hover': {
-            backgroundColor: '#d94400',
+            backgroundColor: '#9a00b9ff',
           },
         }}
         onClick={() => navigate('/expenses')}
