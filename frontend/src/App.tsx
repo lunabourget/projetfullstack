@@ -21,8 +21,13 @@ function App() {
   }, []);
 
   if (loggedIn === null) {
-    return <div>Chargement...</div>; // ou un loader MUI si tu veux
+    return <div>Chargement...</div>; // ou un loader MUI
   }
+
+  const handleLogout = () => {
+    authService.logout(); // supprime le token local
+    setLoggedIn(false);
+  };
 
   return (
     <Routes>
@@ -42,7 +47,7 @@ function App() {
         element={
           <PrivateRoute>
             <>
-              <Header onLogout={() => setLoggedIn(false)} />
+              <Header onLogout={handleLogout} />
               <Dashboard />
             </>
           </PrivateRoute>
@@ -54,9 +59,7 @@ function App() {
         element={
           <PrivateRoute>
             <>
-              <Header onLogout={function (): void {
-                throw new Error("Function not implemented.");
-              } } />
+              <Header onLogout={handleLogout} />
               <Expenses />
             </>
           </PrivateRoute>
@@ -68,10 +71,20 @@ function App() {
         element={
           <PrivateRoute>
             <>
-              <Header onLogout={function (): void {
-                throw new Error("Function not implemented.");
-              } } />
+              <Header onLogout={handleLogout} />
               <Budgets />
+            </>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/cgu"
+        element={
+          <PrivateRoute>
+            <>
+              <Header onLogout={handleLogout} />
+              <CGU />
             </>
           </PrivateRoute>
         }
