@@ -80,14 +80,14 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
             </IconButton>
             <Button
               color="inherit"
-              sx={{ color: tab === "/expenses" ? "#9a00b9ff" : "#fff", fontWeight: tab === "/expenses" ? "bold" : "normal" }}
+              sx={{ color: tab === "/expenses" ? "#d000faff" : "#fff", fontWeight: tab === "/expenses" ? "bold" : "normal" }}
               onClick={() => navigate("/expenses")}
             >
               Dépenses
             </Button>
             <Button
               color="inherit"
-              sx={{ color: tab === "/budgets" ? "#690000ff" : "#fff", fontWeight: tab === "/budgets" ? "bold" : "normal" }}
+              sx={{ color: tab === "/budgets" ? "#d40000ff" : "#fff", fontWeight: tab === "/budgets" ? "bold" : "normal" }}
               onClick={() => navigate("/budgets")}
             >
               Budgets
