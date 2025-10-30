@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { /* MUI imports */ } from "@mui/material";
+import { Button, TextField, Typography, Box } from "@mui/material";
 import authService from "../services/auth.service";
 
 interface AuthPageProps {
@@ -7,38 +7,45 @@ interface AuthPageProps {
 }
 
 const AuthPage: React.FC<AuthPageProps> = ({ onLoginSuccess }) => {
-  const [isLogin, setIsLogin] = useState(true);
   const [pseudo, setPseudo] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setMessage(null);
-
     try {
-      if (isLogin) {
-        await authService.login(pseudo, password);
-        setMessage("Connexion réussie !");
-        onLoginSuccess();
-      } else {
-        await authService.register(pseudo, password);
-        setMessage("Compte créé avec succès !");
-        setIsLogin(true);
-      }
+      await authService.login(pseudo, password);
+      onLoginSuccess();
     } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      alert(err.message);
     }
   };
 
   return (
-    <div> {/* ... */} </div>
+    <Box sx={{ maxWidth: 400, mx: "auto", mt: 10 }}>
+      <Typography variant="h4" mb={2}>
+        Connexion
+      </Typography>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Pseudo"
+          fullWidth
+          margin="normal"
+          value={pseudo}
+          onChange={(e) => setPseudo(e.target.value)}
+        />
+        <TextField
+          label="Mot de passe"
+          type="password"
+          fullWidth
+          margin="normal"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
+          Se connecter
+        </Button>
+      </form>
+    </Box>
   );
 };
 
