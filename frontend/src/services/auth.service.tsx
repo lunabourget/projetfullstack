@@ -25,7 +25,6 @@ class AuthService {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Échec de la connexion");
 
-    // Stocke le token si présent
     if (data.token) localStorage.setItem("token", data.token);
     return data;
   }

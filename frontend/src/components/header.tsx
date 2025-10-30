@@ -84,78 +84,104 @@ const Header: React.FC = () => {
     );
   }
 
-  // --- Mobile version ---
-  return (
-    <>
-      <AppBar position="fixed" color="default" sx={{ background: "#333" }}>
-        <Toolbar
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Typography
-            variant="h6"
-            sx={{
-              color: "#fff",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-            onClick={() => navigate("/")}
-          >
-            BudJet !
-          </Typography>
-
-          <IconButton color="inherit">
-            <AccountCircleIcon sx={{ color: "#fff" }} />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
-      <Paper
+ // --- Mobile version ---
+return (
+  <>
+    <AppBar position="fixed" color="default" sx={{ background: "#333" }}>
+      <Toolbar
         sx={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: theme.zIndex.appBar,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
-        elevation={3}
       >
-        <BottomNavigation
-          showLabels
-          value={tab}
-          onChange={(_, newValue) => {
-            setTab(newValue);
-            navigate(newValue);
-          }}
+        <Typography
+          variant="h6"
           sx={{
-            backgroundColor: "#333",
+            color: "#fff",
+            fontWeight: "bold",
+            cursor: "pointer",
           }}
+          onClick={() => navigate("/")}
         >
-          <BottomNavigationAction
-            label="Accueil"
-            value="/"
-            icon={<HomeIcon />}
-            sx={{ color: "#fff" }}
-          />
-          <BottomNavigationAction
-            label="Dépenses"
-            value="/depenses"
-            icon={<PaidIcon />}
-            sx={{ color: "#fff" }}
-          />
-          <BottomNavigationAction
-            label="Budgets"
-            value="/budgets"
-            icon={<PieChartIcon />}
-            sx={{ color: "#fff" }}
-          />
-        </BottomNavigation>
-      </Paper>
-    </>
-  );
+          BudJet !
+        </Typography>
+
+        <IconButton color="inherit">
+          <AccountCircleIcon sx={{ color: "#fff" }} />
+        </IconButton>
+      </Toolbar>
+    </AppBar>
+
+    <Paper
+      sx={{
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: theme.zIndex.appBar,
+      }}
+      elevation={3}
+    >
+      <BottomNavigation
+        showLabels
+        value={tab}
+        onChange={(_, newValue) => {
+          setTab(newValue);
+          navigate(newValue);
+        }}
+        sx={{
+          backgroundColor: "#333",
+        }}
+      >
+        <BottomNavigationAction
+          label="Accueil"
+          value="/"
+          icon={<HomeIcon />}
+          sx={{
+            color: "#fff",
+            backgroundColor: tab === "/" ? "#f54e00ff" : "transparent",
+            borderRadius: "10px",
+            mx: 0.5,
+            "&.Mui-selected": {
+              color: "#fff",
+            },
+          }}
+        />
+
+        <BottomNavigationAction
+          label="Dépenses"
+          value="/depenses"
+          icon={<PaidIcon />}
+          sx={{
+            color: "#fff",
+            backgroundColor: tab === "/depenses" ? "#9a00b9ff" : "transparent",
+            borderRadius: "10px",
+            mx: 0.5,
+            "&.Mui-selected": {
+              color: "#fff",
+            },
+          }}
+        />
+
+        <BottomNavigationAction
+          label="Budgets"
+          value="/budgets"
+          icon={<PieChartIcon />}
+          sx={{
+            color: "#fff",
+            backgroundColor: tab === "/budgets" ? "#690000ff" : "transparent",
+            borderRadius: "10px",
+            mx: 0.5,
+            "&.Mui-selected": {
+              color: "#fff",
+            },
+          }}
+        />
+      </BottomNavigation>
+    </Paper>
+  </>
+);
 };
 
 export default Header;
