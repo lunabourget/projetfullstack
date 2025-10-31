@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-type Bat = {
+type Creature = {
   id: number;
+  type: 'bat' | 'owl';
   x: number;
   y: number;
   vx: number;
@@ -18,52 +19,59 @@ type Grave = {
   x: number;
 };
 
-export default function FlyingBats() {
-  const [bats, setBats] = useState<Bat[]>([]);
+export default function FlyingCreatures() {
+  const [creatures, setCreatures] = useState<Creature[]>([]);
   const [graves, setGraves] = useState<Grave[]>([]);
 
   useEffect(() => {
-    const spawnBat = () => {
+    const spawnCreature = () => {
+      // 1 chance sur 10 d’être un hibou 🦉
+      const isOwl = Math.random() < 0.1;
       const direction = Math.random() < 0.5 ? 1 : -1;
-      const newBat: Bat = {
+
+      const newCreature: Creature = {
         id: Date.now(),
+        type: isOwl ? 'owl' : 'bat',
         x: direction === 1 ? -50 : window.innerWidth + 50,
         y: Math.random() * window.innerHeight * 0.6,
-        vx: direction * (1 + Math.random() * 2),
+        vx: direction * (isOwl ? 1 : 1 + Math.random() * 2),
         vy: (Math.random() - 0.5) * 2,
         rotation: Math.random() * 20 - 10,
-        scale: 0.7 + Math.random() * 0.6,
-        lifespan: 8000 + Math.random() * 4000,
+        scale: isOwl ? 1.2 : 0.7 + Math.random() * 0.6,
+        lifespan: isOwl ? 10000 + Math.random() * 3000 : 8000 + Math.random() * 4000,
         createdAt: performance.now(),
         falling: false,
       };
-      setBats(prev => [...prev, newBat]);
+
+      setCreatures(prev => [...prev, newCreature]);
     };
 
-    const interval = setInterval(spawnBat, 1500 + Math.random() * 1500);
+    const interval = setInterval(spawnCreature, 1500 + Math.random() * 1500);
     let frame: number;
 
     const update = () => {
-      setBats(prev =>
+      setCreatures(prev =>
         prev
-          .map(b => {
-            if (b.falling) {
-              const newY = b.y + b.vy;
-              const newVy = b.vy + 0.5; // gravité
-              return { ...b, y: newY, vy: newVy, rotation: b.rotation + 10 };
+          .map(c => {
+            if (c.falling) {
+              // Effet de chute
+              const newY = c.y + c.vy;
+              const newVy = c.vy + 0.5;
+              return { ...c, y: newY, vy: newVy, rotation: c.rotation + 10 };
             } else {
-              const t = (performance.now() - b.createdAt) / 1000;
-              const newY = b.y + Math.sin(t * (2 + Math.random())) * 3 + (Math.random() - 0.5) * 1.5;
-              const newX = b.x + b.vx * 4;
-              return { ...b, x: newX, y: newY, rotation: Math.sin(t * 5) * 15 };
+              // Vol aléatoire erratique
+              const t = (performance.now() - c.createdAt) / 1000;
+              const newY = c.y + Math.sin(t * (2 + Math.random())) * 3 + (Math.random() - 0.5) * 1.5;
+              const newX = c.x + c.vx * 4;
+              return { ...c, x: newX, y: newY, rotation: Math.sin(t * 5) * 15 };
             }
           })
           .filter(
-            b =>
-              b.y < window.innerHeight + 100 &&
-              b.x > -150 &&
-              b.x < window.innerWidth + 150 &&
-              performance.now() - b.createdAt < b.lifespan
+            c =>
+              c.y < window.innerHeight + 100 &&
+              c.x > -150 &&
+              c.x < window.innerWidth + 150 &&
+              performance.now() - c.createdAt < c.lifespan
           )
       );
 
@@ -77,38 +85,44 @@ export default function FlyingBats() {
     };
   }, []);
 
-  const handleClick = (id: number, x: number) => {
-    // Chauve-souris "meurt" et tombe
-    setBats(prev =>
-      prev.map(b => (b.id === id ? { ...b, falling: true, vy: 2 } : b))
-    );
+  const handleClick = (id: number, x: number, type: 'bat' | 'owl') => {
+    if (type === 'bat') {
+      // Chauve-souris “meurt” et tombe
+      setCreatures(prev =>
+        prev.map(c => (c.id === id ? { ...c, falling: true, vy: 2 } : c))
+      );
 
-    // Tombe -> apparition d'une croix en bas
-    setTimeout(() => {
-      setGraves(prev => [...prev, { id: Date.now(), x }]);
-    }, 1200);
+      // Apparition d'une pierre tombale après la chute
+      setTimeout(() => {
+        setGraves(prev => [...prev, { id: Date.now(), x }]);
+      }, 1200);
+    } else if (type === 'owl') {
+      // Le hibou fait disparaître toutes les tombes 🪦
+      setGraves([]);
+    }
   };
 
   return (
     <>
-      {bats.map(b => (
+      {creatures.map(c => (
         <div
-          key={b.id}
-          onClick={() => handleClick(b.id, b.x)}
+          key={c.id}
+          onClick={() => handleClick(c.id, c.x, c.type)}
           style={{
             position: 'fixed',
-            left: b.x,
-            top: b.y,
-            fontSize: `${44 * b.scale}px`,
-            transform: `rotate(${b.rotation}deg)`,
-            transition: b.falling ? 'none' : 'transform 0.1s linear',
+            left: c.x,
+            top: c.y,
+            fontSize: `${34 * c.scale}px`,
+            transform: `rotate(${c.rotation}deg)`,
+            transition: c.falling ? 'none' : 'transform 0.1s linear',
             pointerEvents: 'auto',
             zIndex: 9998,
             cursor: 'pointer',
             userSelect: 'none',
+            filter: c.type === 'owl' ? 'brightness(1.5)' : 'none',
           }}
         >
-          🦇
+          {c.type === 'owl' ? '🦉' : '🦇'}
         </div>
       ))}
 
@@ -124,11 +138,21 @@ export default function FlyingBats() {
             opacity: 0.9,
             pointerEvents: 'none',
             zIndex: 9997,
+            animation: 'popIn 0.3s ease-out',
           }}
         >
-          ⚰️
+          🪦
         </div>
       ))}
+
+      <style>
+        {`
+          @keyframes popIn {
+            0% { transform: translateX(-50%) scale(0); opacity: 0; }
+            100% { transform: translateX(-50%) scale(1); opacity: 1; }
+          }
+        `}
+      </style>
     </>
   );
 }
