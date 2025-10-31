@@ -135,7 +135,7 @@ const Expenses: React.FC = () => {
                 color: '#fff',
                 '& fieldset': { borderColor: '#555' },
                 '&:hover fieldset': { borderColor: '#777' },
-                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+                '&.Mui-focused fieldset': { borderColor: '#d000faff' },
               },
             }}
           >
@@ -161,7 +161,7 @@ const Expenses: React.FC = () => {
                 color: '#fff',
                 '& fieldset': { borderColor: '#555' },
                 '&:hover fieldset': { borderColor: '#777' },
-                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+                '&.Mui-focused fieldset': { borderColor: '#d000faff' },
               },
             }}
           />
@@ -179,7 +179,7 @@ const Expenses: React.FC = () => {
                 color: '#fff',
                 '& fieldset': { borderColor: '#555' },
                 '&:hover fieldset': { borderColor: '#777' },
-                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+                '&.Mui-focused fieldset': { borderColor: '#d000faff' },
               },
             }}
           />
@@ -198,12 +198,23 @@ const Expenses: React.FC = () => {
                 color: '#fff',
                 '& fieldset': { borderColor: '#555' },
                 '&:hover fieldset': { borderColor: '#777' },
-                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+                '&.Mui-focused fieldset': { borderColor: '#d000faff' },
               },
             }}
           />
 
-          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
+          <Button 
+            variant="contained" 
+            type="submit" 
+            fullWidth 
+            sx={{ 
+              mt: 2,
+              backgroundColor: '#d000faff',
+              '&:hover': {
+                backgroundColor: '#9a00b9ff',
+              }
+            }}
+          >
             {editingId ? "Mettre à jour" : "Ajouter une dépense"}
           </Button>
         </form>
@@ -235,7 +246,7 @@ const Expenses: React.FC = () => {
                 <TableCell>{exp.description}</TableCell>
                 <TableCell>{new Date(exp.date).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEdit(exp)} sx={{ color: '#90caf9' }}>
+                  <IconButton onClick={() => handleEdit(exp)} sx={{ color: '#d000faff' }}>
                     <Edit />
                   </IconButton>
                   <IconButton onClick={() => handleDelete(exp.id)}>

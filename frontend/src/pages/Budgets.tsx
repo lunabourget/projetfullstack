@@ -98,7 +98,7 @@ const Budgets: React.FC = () => {
                 color: '#fff',
                 '& fieldset': { borderColor: '#555' },
                 '&:hover fieldset': { borderColor: '#777' },
-                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+                '&.Mui-focused fieldset': { borderColor: '#d40000ff' },
               },
             }}
           >
@@ -124,12 +124,18 @@ const Budgets: React.FC = () => {
                 color: '#fff',
                 '& fieldset': { borderColor: '#555' },
                 '&:hover fieldset': { borderColor: '#777' },
-                '&.Mui-focused fieldset': { borderColor: '#90caf9' },
+                '&.Mui-focused fieldset': { borderColor: '#d40000ff' },
               },
             }}
           />
 
-          <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
+          <Button variant="contained" type="submit" fullWidth sx={{ 
+              mt: 2,
+              backgroundColor: '#d40000ff',
+              '&:hover': {
+                backgroundColor: '#a70000ff',
+              }
+            }}>
             {editingId ? "Mettre à jour" : "Ajouter un budget"}
           </Button>
         </form>
@@ -157,7 +163,7 @@ const Budgets: React.FC = () => {
                 <TableCell>{b.category_name || "—"}</TableCell>
                 <TableCell>{b.amount}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEdit(b)} sx={{ color: '#90caf9' }}>
+                  <IconButton onClick={() => handleEdit(b)} sx={{ color: '#d40000ff' }}>
                     <Edit />
                   </IconButton>
                   <IconButton onClick={() => handleDelete(b.id)}>

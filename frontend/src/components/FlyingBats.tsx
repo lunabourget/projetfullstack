@@ -99,7 +99,7 @@ export default function FlyingBats() {
             position: 'fixed',
             left: b.x,
             top: b.y,
-            fontSize: `${24 * b.scale}px`,
+            fontSize: `${44 * b.scale}px`,
             transform: `rotate(${b.rotation}deg)`,
             transition: b.falling ? 'none' : 'transform 0.1s linear',
             pointerEvents: 'auto',
