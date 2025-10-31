@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.9.2",
+    "axios": "^1.13.1",
+    "htmlhint": "^1.7.1",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}

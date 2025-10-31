@@ -107,7 +107,7 @@ export const getExpensesByBudget = async (req: Request, res: Response): Promise<
             return;
         }
 
-        if (isNaN(budget_id)) {
+        if (Number.isNaN(budget_id)) {
             res.status(400).json({ message: 'Invalid budget ID' });
             return;
         }
