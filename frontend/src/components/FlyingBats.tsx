@@ -2,80 +2,131 @@ import React, { useEffect, useState } from 'react';
 
 type Bat = {
   id: number;
+  x: number;
   y: number;
-  scale: number;
-  duration: number;
-  amplitude: number;
-  frequency: number;
+  vx: number;
+  vy: number;
   rotation: number;
+  scale: number;
+  lifespan: number;
+  createdAt: number;
+  falling: boolean;
+};
+
+type Grave = {
+  id: number;
+  x: number;
 };
 
 export default function FlyingBats() {
   const [bats, setBats] = useState<Bat[]>([]);
+  const [graves, setGraves] = useState<Grave[]>([]);
 
   useEffect(() => {
     const spawnBat = () => {
+      const direction = Math.random() < 0.5 ? 1 : -1;
       const newBat: Bat = {
         id: Date.now(),
-        y: Math.random() * (window.innerHeight / 2), // zone de vol haute
-        scale: 0.7 + Math.random() * 0.7,
-        duration: 5000 + Math.random() * 4000,
-        amplitude: 40 + Math.random() * 60, // amplitude du zigzag
-        frequency: 2 + Math.random() * 3, // vitesse du zigzag
+        x: direction === 1 ? -50 : window.innerWidth + 50,
+        y: Math.random() * window.innerHeight * 0.6,
+        vx: direction * (1 + Math.random() * 2),
+        vy: (Math.random() - 0.5) * 2,
         rotation: Math.random() * 20 - 10,
+        scale: 0.7 + Math.random() * 0.6,
+        lifespan: 8000 + Math.random() * 4000,
+        createdAt: performance.now(),
+        falling: false,
       };
-
       setBats(prev => [...prev, newBat]);
-
-      // Suppression après le vol
-      setTimeout(() => {
-        setBats(prev => prev.filter(b => b.id !== newBat.id));
-      }, newBat.duration);
     };
 
-    // Apparition d'une chauve-souris toutes les 1 à 2 secondes
-    const interval = setInterval(spawnBat, 1000 + Math.random() * 1000);
-    return () => clearInterval(interval);
+    const interval = setInterval(spawnBat, 1500 + Math.random() * 1500);
+    let frame: number;
+
+    const update = () => {
+      setBats(prev =>
+        prev
+          .map(b => {
+            if (b.falling) {
+              const newY = b.y + b.vy;
+              const newVy = b.vy + 0.5; // gravité
+              return { ...b, y: newY, vy: newVy, rotation: b.rotation + 10 };
+            } else {
+              const t = (performance.now() - b.createdAt) / 1000;
+              const newY = b.y + Math.sin(t * (2 + Math.random())) * 3 + (Math.random() - 0.5) * 1.5;
+              const newX = b.x + b.vx * 4;
+              return { ...b, x: newX, y: newY, rotation: Math.sin(t * 5) * 15 };
+            }
+          })
+          .filter(
+            b =>
+              b.y < window.innerHeight + 100 &&
+              b.x > -150 &&
+              b.x < window.innerWidth + 150 &&
+              performance.now() - b.createdAt < b.lifespan
+          )
+      );
+
+      frame = requestAnimationFrame(update);
+    };
+
+    frame = requestAnimationFrame(update);
+    return () => {
+      clearInterval(interval);
+      cancelAnimationFrame(frame);
+    };
   }, []);
+
+  const handleClick = (id: number, x: number) => {
+    // Chauve-souris "meurt" et tombe
+    setBats(prev =>
+      prev.map(b => (b.id === id ? { ...b, falling: true, vy: 2 } : b))
+    );
+
+    // Tombe -> apparition d'une croix en bas
+    setTimeout(() => {
+      setGraves(prev => [...prev, { id: Date.now(), x }]);
+    }, 1200);
+  };
 
   return (
     <>
-      {bats.map(bat => (
+      {bats.map(b => (
         <div
-          key={bat.id}
+          key={b.id}
+          onClick={() => handleClick(b.id, b.x)}
           style={{
             position: 'fixed',
-            top: bat.y,
-            left: -50,
-            fontSize: `${24 * bat.scale}px`,
+            left: b.x,
+            top: b.y,
+            fontSize: `${24 * b.scale}px`,
+            transform: `rotate(${b.rotation}deg)`,
+            transition: b.falling ? 'none' : 'transform 0.1s linear',
+            pointerEvents: 'auto',
             zIndex: 9998,
-            pointerEvents: 'none',
-            animation: `fly-${bat.id} ${bat.duration}ms linear forwards`,
+            cursor: 'pointer',
+            userSelect: 'none',
           }}
         >
           🦇
-          <style>
-            {`
-              @keyframes fly-${bat.id} {
-                0% {
-                  transform: translate(0, 0) rotate(${bat.rotation}deg);
-                  opacity: 0;
-                }
-                5% { opacity: 1; }
-                50% {
-                  transform: translate(${window.innerWidth / 2}px, ${
-              bat.amplitude
-            }px) rotate(${bat.rotation}deg);
-                }
-                100% {
-                  transform: translate(${window.innerWidth + 100}px, ${
-              Math.sin(bat.frequency * Math.PI) * bat.amplitude
-            }px) rotate(${bat.rotation}deg);
-                  opacity: 0;
-                }
-              }
-            `}
-          </style>
+        </div>
+      ))}
+
+      {graves.map(g => (
+        <div
+          key={g.id}
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: g.x,
+            fontSize: '32px',
+            transform: 'translateX(-50%)',
+            opacity: 0.9,
+            pointerEvents: 'none',
+            zIndex: 9997,
+          }}
+        >
+          ⚰️
         </div>
       ))}
     </>
