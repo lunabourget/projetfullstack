@@ -37,7 +37,8 @@ export default function FlyingCreatures() {
         vx: direction * (isOwl ? 1 : 1 + Math.random() * 2),
         vy: (Math.random() - 0.5) * 2,
         rotation: Math.random() * 20 - 10,
-        scale: isOwl ? 1.2 : 0.7 + Math.random() * 0.6,
+        scale: isOwl ? 1.2 : 1.2 + Math.random() * 0.8, // chauves-souris plus grandes et aléatoires
+
         lifespan: isOwl ? 10000 + Math.random() * 3000 : 8000 + Math.random() * 4000,
         createdAt: performance.now(),
         falling: false,
