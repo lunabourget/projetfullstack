@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 import Expenses from "./pages/Expenses";
 import Budgets from "./pages/Budgets";
+import CustomCursor from "./components/Cursor";
 import CGU from "./pages/CGU";
 import Dashboard from "./pages/Dashboard";
 import authService from "./services/auth.service";
@@ -32,6 +33,7 @@ function App() {
 
   return (
     <Routes>
+      <CustomCursor />
       <Route
         path="/"
         element={
