@@ -81,9 +81,9 @@ export default function GenericPie(props: Readonly<AdvancedPieProps>) {
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'flex-start',
+          justifyContent: isMobile ? 'center' : 'flex-start',
           height: chartHeight,
-          width: `${containerWidth}px`,
+          width: isMobile ? '100%' : `${containerWidth}px`,
         }}
       >
         <PieChart
@@ -96,7 +96,7 @@ export default function GenericPie(props: Readonly<AdvancedPieProps>) {
                 const pct = getPercentage(String(item.id), mainData);
                 return pct >= minPercentageToShow ? `${item.id} (${pct.toFixed(0)}%)` : '';
               },
-              valueFormatter: ({ value }) => `${value}`,
+              valueFormatter: ({ value }) => `${value} €`,
               cornerRadius: 5,
               highlightScope: { fade: 'global', highlight: 'item' },
               highlighted: { additionalRadius: 2 },
@@ -113,7 +113,7 @@ export default function GenericPie(props: Readonly<AdvancedPieProps>) {
                 return pct >= minPercentageToShow ? `${item.label} (${pct.toFixed(0)}%)` : '';
               },
               arcLabelRadius: outerRadius - 45,
-              valueFormatter: ({ value }) => `${value}`,
+              valueFormatter: ({ value }) => `${value} €`,
               cornerRadius: 5,
               highlightScope: { fade: 'global', highlight: 'item' },
               highlighted: { additionalRadius: 2 },
@@ -127,7 +127,7 @@ export default function GenericPie(props: Readonly<AdvancedPieProps>) {
               data: outerData.map((d) => ({ ...d })),
               arcLabel: () => '',
               arcLabelRadius: outerRadius - 10,
-              valueFormatter: ({ value }) => `${value}`,
+              valueFormatter: ({ value }) => `${value} €`,
               cornerRadius: 5,
               highlightScope: { fade: 'global', highlight: 'item' },
               highlighted: { additionalRadius: 2 },

@@ -34,7 +34,7 @@ const CGU: React.FC = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 900, mx: "auto", mt: 6, mb: 6, p: 2, backgroundColor: '#2C2C2C', color: '#FFFFFF' }}>
+    <Box sx={{ maxWidth: 900, mx: "auto", mt: { xs: 10, sm: 6 }, mb: 6, p: 2, backgroundColor: '#2C2C2C', color: '#FFFFFF' }}>
       <Typography variant="h3" align="center" gutterBottom>
         {transformText("Conditions Générales d'Utilisation")}
       </Typography>

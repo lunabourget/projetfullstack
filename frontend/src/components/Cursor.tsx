@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useHalloween } from '../contexts/HalloweenContext';
+import { useTheme, useMediaQuery } from '@mui/material';
 
 export default function CustomCursor() {
   const { isHalloweenMode } = useHalloween();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -13,8 +16,8 @@ export default function CustomCursor() {
     return () => window.removeEventListener('mousemove', move);
   }, []);
 
-  // Mode normal : curseur par défaut
-  if (!isHalloweenMode) {
+  // Mode normal ou mobile : curseur par défaut
+  if (!isHalloweenMode || isMobile) {
     return (
       <style>
         {`body { cursor: auto; }`}

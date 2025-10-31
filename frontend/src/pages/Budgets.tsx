@@ -79,7 +79,7 @@ const Budgets: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#2C2C2C', p: 4 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#2C2C2C', p: 4, pt: { xs: 10, sm: 4 } }}>
       <Box sx={{ maxWidth: 800, mx: "auto" }}>
         <Typography variant="h4" mb={2} sx={{ color: '#fff' }}>
           Budgets

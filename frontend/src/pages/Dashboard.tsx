@@ -73,11 +73,11 @@ const Dashboard: React.FC = () => {
   );
 
   return (
-    <Box sx={{ p: 4, bgcolor: '#2C2C2C' }}>
+    <Box sx={{ p: 4, pt: { xs: 10, sm: 4 }, bgcolor: '#2C2C2C' }}>
       <Typography variant="h4" sx={{ color: '#fff' }}>Vos dépenses</Typography>
 
-      <Box sx={{ mt: 3, bgcolor: 'transparent', display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, alignItems: 'stretch', justifyContent: 'flex-start' }}>
-        <Box sx={{ flex: '0 0 auto', minWidth: 0 }}>
+      <Box sx={{ mt: 3, bgcolor: 'transparent', display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, alignItems: { xs: 'center', md: 'stretch' }, justifyContent: 'flex-start' }}>
+        <Box sx={{ flex: { xs: '1 1 auto', md: '0 0 auto' }, minWidth: 0, width: { xs: '100%', md: 'auto' } }}>
           {error && (
             <Typography color="error" sx={{ mb: 2 }}>
               {error}
@@ -91,12 +91,12 @@ const Dashboard: React.FC = () => {
             outerData={outerData}
           />
           {!loading && mainData.length === 0 && (
-            <Typography sx={{ mt: 2, color: '#bbb' }}>
+            <Typography sx={{ mt: 2, color: '#bbb', textAlign: 'center' }}>
               Aucune donnée pour le moment. Ajoutez des budgets et des dépenses pour voir le graphique.
             </Typography>
           )}
         </Box>
-        <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box sx={{ flex: 1, minWidth: 0, width: { xs: '100%', md: 'auto' } }}>
           <BudgetBarChart budgets={budgets} categories={categories} expenses={expenses} />
         </Box>
       </Box>

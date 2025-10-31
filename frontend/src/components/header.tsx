@@ -168,9 +168,26 @@ return (
           BudJet !
         </Typography>
 
-        <IconButton color="inherit" onClick={handleMenuOpen}>
-          <AccountCircleIcon sx={{ color: "#fff" }} />
-        </IconButton>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Tooltip title={isHalloweenMode ? "Désactiver Halloween" : "Activer Halloween"}>
+            <Switch
+              checked={isHalloweenMode}
+              onChange={toggleHalloweenMode}
+              size="small"
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: isHalloweenMode ? '#f54e00ff' : '#2196f3',
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: isHalloweenMode ? '#9a00b9ff' : '#42a5f5',
+                },
+              }}
+            />
+          </Tooltip>
+          <IconButton color="inherit" onClick={handleMenuOpen}>
+            <AccountCircleIcon sx={{ color: "#fff" }} />
+          </IconButton>
+        </Box>
         <Menu
           anchorEl={anchorEl}
           open={open}
@@ -250,6 +267,21 @@ return (
           sx={{
             color: "#fff",
             backgroundColor: tab === "/budgets" ? (isHalloweenMode ? "#690000ff" : "#f44336") : "transparent",
+            borderRadius: "10px",
+            mx: 0.5,
+            "&.Mui-selected": {
+              color: "#fff",
+            },
+          }}
+        />
+
+        <BottomNavigationAction
+          label="CGU"
+          value="/cgu"
+          icon={<AccountCircleIcon />}
+          sx={{
+            color: "#fff",
+            backgroundColor: tab === "/cgu" ? (isHalloweenMode ? "#f54e00ff" : "#ff9800") : "transparent",
             borderRadius: "10px",
             mx: 0.5,
             "&.Mui-selected": {
