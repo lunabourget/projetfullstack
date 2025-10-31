@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 type Bat = {
   id: number;
-  x: number;
   y: number;
-  duration: number;
   scale: number;
+  duration: number;
+  amplitude: number;
+  frequency: number;
   rotation: number;
 };
 
@@ -16,23 +17,24 @@ export default function FlyingBats() {
     const spawnBat = () => {
       const newBat: Bat = {
         id: Date.now(),
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * (window.innerHeight / 2), // zone haute de l'écran
-        duration: 5000 + Math.random() * 3000, // durée du vol
-        scale: 0.8 + Math.random() * 0.6,
-        rotation: Math.random() * 30 - 15, // petit angle aléatoire
+        y: Math.random() * (window.innerHeight / 2), // zone de vol haute
+        scale: 0.7 + Math.random() * 0.7,
+        duration: 5000 + Math.random() * 4000,
+        amplitude: 40 + Math.random() * 60, // amplitude du zigzag
+        frequency: 2 + Math.random() * 3, // vitesse du zigzag
+        rotation: Math.random() * 20 - 10,
       };
 
       setBats(prev => [...prev, newBat]);
 
-      // Supprimer après le vol
+      // Suppression après le vol
       setTimeout(() => {
         setBats(prev => prev.filter(b => b.id !== newBat.id));
       }, newBat.duration);
     };
 
-    // Apparition d'une chauve-souris toutes les 1 à 3 secondes
-    const interval = setInterval(spawnBat, 1000 + Math.random() * 2000);
+    // Apparition d'une chauve-souris toutes les 1 à 2 secondes
+    const interval = setInterval(spawnBat, 1000 + Math.random() * 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -44,12 +46,11 @@ export default function FlyingBats() {
           style={{
             position: 'fixed',
             top: bat.y,
-            left: -50, // départ hors de l'écran
+            left: -50,
             fontSize: `${24 * bat.scale}px`,
-            transform: `rotate(${bat.rotation}deg)`,
-            animation: `fly-${bat.id} ${bat.duration}ms linear forwards`,
             zIndex: 9998,
             pointerEvents: 'none',
+            animation: `fly-${bat.id} ${bat.duration}ms linear forwards`,
           }}
         >
           🦇
@@ -57,13 +58,19 @@ export default function FlyingBats() {
             {`
               @keyframes fly-${bat.id} {
                 0% {
-                  transform: translateX(0) rotate(${bat.rotation}deg);
-                  opacity: 0.2;
+                  transform: translate(0, 0) rotate(${bat.rotation}deg);
+                  opacity: 0;
                 }
-                10% { opacity: 1; }
-                90% { opacity: 1; }
+                5% { opacity: 1; }
+                50% {
+                  transform: translate(${window.innerWidth / 2}px, ${
+              bat.amplitude
+            }px) rotate(${bat.rotation}deg);
+                }
                 100% {
-                  transform: translateX(${window.innerWidth + 100}px) rotate(${bat.rotation}deg);
+                  transform: translate(${window.innerWidth + 100}px, ${
+              Math.sin(bat.frequency * Math.PI) * bat.amplitude
+            }px) rotate(${bat.rotation}deg);
                   opacity: 0;
                 }
               }

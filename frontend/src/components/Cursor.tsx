@@ -31,7 +31,7 @@ export default function CustomCursor() {
           top: position.y,
           pointerEvents: 'none',
           zIndex: 9999,
-          fontSize: '48px',
+          fontSize: '38px',
           animation: 'ghostPulse 1.5s ease-in-out infinite', // 👈 effet "respiration"
         }}
       >
