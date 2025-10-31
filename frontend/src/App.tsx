@@ -32,10 +32,11 @@ function App() {
   };
 
   return (
-    <Routes>
+    <>
       <CustomCursor />
-      <Route
-        path="/"
+      <Routes>
+        <Route
+          path="/"
         element={
           loggedIn ? (
             <Navigate to="/dashboard" />
@@ -100,7 +101,8 @@ function App() {
       />
 
       <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+      </Routes>
+    </>
   );
 }
 
