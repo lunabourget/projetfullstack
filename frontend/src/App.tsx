@@ -7,6 +7,7 @@ import CGU from "./pages/CGU";
 import Dashboard from "./pages/Dashboard";
 import authService from "./services/auth.service";
 import Header from "./components/header";
+import SpiderWebOverlay from "./components/SpiderWebOverlay";
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const token = authService.getToken();
@@ -37,7 +38,10 @@ function App() {
           loggedIn ? (
             <Navigate to="/dashboard" />
           ) : (
-            <AuthPage onLoginSuccess={() => setLoggedIn(true)} />
+            <>
+              <SpiderWebOverlay />
+              <AuthPage onLoginSuccess={() => setLoggedIn(true)} />
+            </>
           )
         }
       />
@@ -47,6 +51,7 @@ function App() {
         element={
           <PrivateRoute>
             <>
+              <SpiderWebOverlay />
               <Header onLogout={handleLogout} />
               <Dashboard />
             </>
@@ -59,6 +64,7 @@ function App() {
         element={
           <PrivateRoute>
             <>
+              <SpiderWebOverlay />
               <Header onLogout={handleLogout} />
               <Expenses />
             </>
@@ -71,6 +77,7 @@ function App() {
         element={
           <PrivateRoute>
             <>
+              <SpiderWebOverlay />
               <Header onLogout={handleLogout} />
               <Budgets />
             </>
