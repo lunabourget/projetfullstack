@@ -37,7 +37,7 @@ jobs:
 
       - name: Build and start Docker containers
         run: |
-          docker-compose up -d --build
+          docker compose up -d --build
           echo "Waiting for services to be ready..."
           sleep 10
 
@@ -60,13 +60,13 @@ jobs:
         if: failure()
         run: |
           echo "=== Backend logs ==="
-          docker-compose logs backend
+          docker compose logs backend
           echo "=== Database logs ==="
-          docker-compose logs db
+          docker compose logs db
 
       - name: Stop Docker containers
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
 
       - name: Upload test results
         if: always()
