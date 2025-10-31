@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import authService from "./services/auth.service";
 import Header from "./components/header";
 import SpiderWebOverlay from "./components/SpiderWebOverlay";
+import FlyingBats from "./components/FlyingBats";
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const token = authService.getToken();
@@ -34,6 +35,7 @@ function App() {
   return (
     <>
       <CustomCursor />
+      <FlyingBats />
       <Routes>
         <Route
           path="/"

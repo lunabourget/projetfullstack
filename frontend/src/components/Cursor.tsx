@@ -13,24 +13,29 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Masque le curseur natif */}
-      <style>{`body { cursor: none; }`}</style>
+      <style>
+        {`
+          body { cursor: none; }
 
-      {/* Ton icône ou SVG */}
+          @keyframes ghostPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); }
+          }
+        `}
+      </style>
+
       <div
         style={{
           position: 'fixed',
           left: position.x,
           top: position.y,
-          transform: 'translate(-50%, -50%)',
           pointerEvents: 'none',
           zIndex: 9999,
-          transition: 'transform 0.05s linear',
+          fontSize: '48px',
+          animation: 'ghostPulse 1.5s ease-in-out infinite', // 👈 effet "respiration"
         }}
       >
-        {/* Exemple avec une icône textuelle */}
         👻
-        {/* ou bien : <img src="/icon.svg" width={24} height={24} alt="cursor" /> */}
       </div>
     </>
   );
