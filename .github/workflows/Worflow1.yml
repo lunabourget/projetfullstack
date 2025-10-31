@@ -1,0 +1,44 @@
+name: Afficher des trucs
+
+on:
+  push:
+    branches: [ "main" ]  # se déclenche à chaque push sur la branche main
+
+env:
+    WOLOLO: blabla
+    Halloween: '🎃👻'
+
+jobs:
+
+  afficher-texte:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Afficher un message simple
+        run: echo "Hello zombie"
+
+      - name: Afficher plusieurs lignes
+        run: |
+          echo "=== Début du script ==="
+          echo "Étape 1 : préparation"
+          echo "Étape 2 : déploiement"
+          echo "=== Fin du script ==="
+
+      - name: Texte colore
+        run: |
+            echo -e "\033[32mSuccès !\033[0m"
+            echo -e "\033[31mErreur !\033[0m"
+
+      - name: Messages spéciaux
+        run: |
+            echo "::notice::Ceci est une note"
+            echo "::warning::Attention, vérifie la configuration"
+            echo "::error::Une erreur s’est produite"
+
+      - name: Afficher des variables d'environnement
+        env:
+          MON_MESSAGE: "Je vais afficher une variable d'environnement"
+        run: echo "$MON_MESSAGE"
+
+      - name: Afficher coucou si Halloween est défini
+        if: env.Halloween == '🎃👻'
+        run: echo "C'est Halloween ! Coucou les fantômes ! 👻🎃"
