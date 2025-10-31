@@ -11,6 +11,7 @@ import Header from "./components/header";
 import SpiderWebOverlay from "./components/SpiderWebOverlay";
 import FlyingBats from "./components/FlyingBats";
 import Spiders from "./components/Spiders";
+import { HalloweenProvider } from "./contexts/HalloweenContext";
 
 const PrivateRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const token = authService.getToken();
@@ -34,7 +35,7 @@ function App() {
   };
 
   return (
-    <>
+    <HalloweenProvider>
       <CustomCursor />
       <FlyingBats />
       <Spiders />
@@ -106,7 +107,7 @@ function App() {
 
       <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </>
+    </HalloweenProvider>
   );
 }
 

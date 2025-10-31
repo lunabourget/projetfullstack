@@ -16,8 +16,10 @@ import {
 import { Delete, Edit } from "@mui/icons-material";
 import budgetService from "../services/budget.service";
 import authService from "../services/auth.service";
+import { useHalloween } from "../contexts/HalloweenContext";
 
 const Budgets: React.FC = () => {
+  const { isHalloweenMode } = useHalloween();
   const [budgets, setBudgets] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [categoryId, setCategoryId] = useState<string>("");
@@ -98,7 +100,7 @@ const Budgets: React.FC = () => {
                 color: '#fff',
                 '& fieldset': { borderColor: '#555' },
                 '&:hover fieldset': { borderColor: '#777' },
-                '&.Mui-focused fieldset': { borderColor: '#d40000ff' },
+                '&.Mui-focused fieldset': { borderColor: isHalloweenMode ? '#d40000ff' : '#f44336' },
               },
             }}
           >
@@ -124,16 +126,16 @@ const Budgets: React.FC = () => {
                 color: '#fff',
                 '& fieldset': { borderColor: '#555' },
                 '&:hover fieldset': { borderColor: '#777' },
-                '&.Mui-focused fieldset': { borderColor: '#d40000ff' },
+                '&.Mui-focused fieldset': { borderColor: isHalloweenMode ? '#d40000ff' : '#f44336' },
               },
             }}
           />
 
           <Button variant="contained" type="submit" fullWidth sx={{ 
               mt: 2,
-              backgroundColor: '#d40000ff',
+              backgroundColor: isHalloweenMode ? '#d40000ff' : '#f44336',
               '&:hover': {
-                backgroundColor: '#a70000ff',
+                backgroundColor: isHalloweenMode ? '#a70000ff' : '#d32f2f',
               }
             }}>
             {editingId ? "Mettre à jour" : "Ajouter un budget"}
@@ -163,7 +165,7 @@ const Budgets: React.FC = () => {
                 <TableCell>{b.category_name || "—"}</TableCell>
                 <TableCell>{b.amount}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEdit(b)} sx={{ color: '#d40000ff' }}>
+                  <IconButton onClick={() => handleEdit(b)} sx={{ color: isHalloweenMode ? '#d40000ff' : '#f44336' }}>
                     <Edit />
                   </IconButton>
                   <IconButton onClick={() => handleDelete(b.id)}>

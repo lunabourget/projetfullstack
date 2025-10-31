@@ -9,10 +9,12 @@ import budgetService from "../services/budget.service";
 import expenseService from "../services/expense.service";
 import { prepareChartData } from "../helpers/prepareChartData";
 import categoryService from "../services/category.service";
+import { useHalloween } from "../contexts/HalloweenContext";
 
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { isHalloweenMode } = useHalloween();
   const [mainData, setMainData] = useState<ChartDatum[]>([]);
   const [middleData, setMiddleData] = useState<ChartDatum[]>([]);
   const [outerData, setOuterData] = useState<ChartDatum[]>([]);
@@ -41,7 +43,8 @@ const Dashboard: React.FC = () => {
         const { mainData, middleData, outerData } = prepareChartData(
           categoriesRes,
           budgetsRes,
-          expensesRes
+          expensesRes,
+          isHalloweenMode
         );
         setMainData(mainData);
         setMiddleData(middleData);
@@ -62,7 +65,7 @@ const Dashboard: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [isHalloweenMode]);
 
   const totalEuros = useMemo(
     () => mainData.reduce((acc, d) => acc + d.value, 0),
@@ -105,10 +108,10 @@ const Dashboard: React.FC = () => {
           position: 'fixed',
           bottom: 80,
           right: 40,
-          backgroundColor: '#d000faff',
+          backgroundColor: isHalloweenMode ? '#d000faff' : '#9c27b0',
           color: '#fff',
           '&:hover': {
-            backgroundColor: '#9a00b9ff',
+            backgroundColor: isHalloweenMode ? '#9a00b9ff' : '#7b1fa2',
           },
         }}
         onClick={() => navigate('/expenses')}

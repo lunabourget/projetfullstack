@@ -16,8 +16,10 @@ import {
 import { Delete, Edit } from "@mui/icons-material";
 import expenseService from "../services/expense.service";
 import authService from "../services/auth.service";
+import { useHalloween } from "../contexts/HalloweenContext";
 
 const Expenses: React.FC = () => {
+  const { isHalloweenMode } = useHalloween();
   const [budgets, setBudgets] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [expenses, setExpenses] = useState<any[]>([]);
@@ -135,7 +137,7 @@ const Expenses: React.FC = () => {
                 color: '#fff',
                 '& fieldset': { borderColor: '#555' },
                 '&:hover fieldset': { borderColor: '#777' },
-                '&.Mui-focused fieldset': { borderColor: '#d000faff' },
+                '&.Mui-focused fieldset': { borderColor: isHalloweenMode ? '#d000faff' : '#9c27b0' },
               },
             }}
           >
@@ -209,9 +211,9 @@ const Expenses: React.FC = () => {
             fullWidth 
             sx={{ 
               mt: 2,
-              backgroundColor: '#d000faff',
+              backgroundColor: isHalloweenMode ? '#d000faff' : '#9c27b0',
               '&:hover': {
-                backgroundColor: '#9a00b9ff',
+                backgroundColor: isHalloweenMode ? '#9a00b9ff' : '#7b1fa2',
               }
             }}
           >
@@ -246,7 +248,7 @@ const Expenses: React.FC = () => {
                 <TableCell>{exp.description}</TableCell>
                 <TableCell>{new Date(exp.date).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEdit(exp)} sx={{ color: '#d000faff' }}>
+                  <IconButton onClick={() => handleEdit(exp)} sx={{ color: isHalloweenMode ? '#d000faff' : '#9c27b0' }}>
                     <Edit />
                   </IconButton>
                   <IconButton onClick={() => handleDelete(exp.id)}>

@@ -6,7 +6,8 @@ import Typography from '@mui/material/Typography';
 import type { Budget } from '../interfaces/Budget';
 import type { Category } from '../interfaces/Category';
 import type { Expense } from '../interfaces/Expense';
-import { categoryColors } from '../static/categoryColors';
+import { getCategoryColors } from '../static/categoryColors';
+import { useHalloween } from '../contexts/HalloweenContext';
 
 interface BudgetBarChartProps {
   budgets: Budget[];
@@ -16,6 +17,8 @@ interface BudgetBarChartProps {
 
 export default function BudgetBarChart({ budgets, categories, expenses }: Readonly<BudgetBarChartProps>) {
   const theme = useTheme();
+  const { isHalloweenMode } = useHalloween();
+  const categoryColors = getCategoryColors(isHalloweenMode);
 
   const data = budgets.map((budget) => {
     const cat = categories.find((c) => c.id === budget.category_id);

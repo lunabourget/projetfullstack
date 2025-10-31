@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHalloween } from '../contexts/HalloweenContext';
 
 type Spider = {
   id: number;
@@ -10,9 +11,15 @@ type Spider = {
 };
 
 export default function Spiders() {
+  const { isHalloweenMode } = useHalloween();
   const [spiders, setSpiders] = useState<Spider[]>([]);
 
   useEffect(() => {
+    if (!isHalloweenMode) {
+      // Nettoyer les araignées quand le mode est désactivé
+      setSpiders([]);
+      return;
+    }
     const spawnSpider = () => {
       if (spiders.length >= 3) return; // max 3 araignées
 
@@ -52,7 +59,7 @@ export default function Spiders() {
       clearInterval(interval);
       cancelAnimationFrame(frame);
     };
-  }, [spiders.length]);
+  }, [spiders.length, isHalloweenMode]);
 
   return (
     <>

@@ -13,6 +13,8 @@ import {
   Paper,
   Menu,
   MenuItem,
+  Switch,
+  Tooltip,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -21,6 +23,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate, useLocation } from "react-router-dom";
 import authService from "../services/auth.service";
+import { useHalloween } from "../contexts/HalloweenContext";
 
 interface HeaderProps {
   onLogout: () => void;
@@ -31,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const location = useLocation();
+  const { isHalloweenMode, toggleHalloweenMode } = useHalloween();
 
   const [tab, setTab] = React.useState(location.pathname);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -75,26 +79,40 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
           </Box>
 
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <IconButton onClick={() => navigate("/")} color="inherit" sx={{ color: tab === "/" ? "#f54e00ff" : "#fff" }}>
+            <Tooltip title={isHalloweenMode ? "Désactiver le mode Halloween" : "Activer le mode Halloween"}>
+              <Switch
+                checked={isHalloweenMode}
+                onChange={toggleHalloweenMode}
+                sx={{
+                  '& .MuiSwitch-switchBase.Mui-checked': {
+                    color: isHalloweenMode ? '#f54e00ff' : '#2196f3',
+                  },
+                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                    backgroundColor: isHalloweenMode ? '#9a00b9ff' : '#42a5f5',
+                  },
+                }}
+              />
+            </Tooltip>
+            <IconButton onClick={() => navigate("/")} color="inherit" sx={{ color: tab === "/" ? (isHalloweenMode ? "#f54e00ff" : "#2196f3") : "#fff" }}>
               <HomeIcon />
             </IconButton>
             <Button
               color="inherit"
-              sx={{ color: tab === "/expenses" ? "#d000faff" : "#fff", fontWeight: tab === "/expenses" ? "bold" : "normal" }}
+              sx={{ color: tab === "/expenses" ? (isHalloweenMode ? "#d000faff" : "#c231dbff") : "#fff", fontWeight: tab === "/expenses" ? "bold" : "normal" }}
               onClick={() => navigate("/expenses")}
             >
               Dépenses
             </Button>
             <Button
               color="inherit"
-              sx={{ color: tab === "/budgets" ? "#d40000ff" : "#fff", fontWeight: tab === "/budgets" ? "bold" : "normal" }}
+              sx={{ color: tab === "/budgets" ? (isHalloweenMode ? "#d40000ff" : "#f44336") : "#fff", fontWeight: tab === "/budgets" ? "bold" : "normal" }}
               onClick={() => navigate("/budgets")}
             >
               Budgets
             </Button>
             <Button
               color="inherit"
-              sx={{ color: tab === "/cgu" ? "#f54e00ff" : "#fff", fontWeight: tab === "/cgu" ? "bold" : "normal" }}
+              sx={{ color: tab === "/cgu" ? (isHalloweenMode ? "#f54e00ff" : "#ff9800") : "#fff", fontWeight: tab === "/cgu" ? "bold" : "normal" }}
               onClick={() => navigate("/cgu")}
             >
               CGU
@@ -201,7 +219,7 @@ return (
           icon={<HomeIcon />}
           sx={{
             color: "#fff",
-            backgroundColor: tab === "/" ? "#f54e00ff" : "transparent",
+            backgroundColor: tab === "/" ? (isHalloweenMode ? "#f54e00ff" : "#2196f3") : "transparent",
             borderRadius: "10px",
             mx: 0.5,
             "&.Mui-selected": {
@@ -216,7 +234,7 @@ return (
           icon={<PaidIcon />}
           sx={{
             color: "#fff",
-            backgroundColor: tab === "/expenses" ? "#9a00b9ff" : "transparent",
+            backgroundColor: tab === "/expenses" ? (isHalloweenMode ? "#9a00b9ff" : "#9c27b0") : "transparent",
             borderRadius: "10px",
             mx: 0.5,
             "&.Mui-selected": {
@@ -231,7 +249,7 @@ return (
           icon={<PieChartIcon />}
           sx={{
             color: "#fff",
-            backgroundColor: tab === "/budgets" ? "#690000ff" : "transparent",
+            backgroundColor: tab === "/budgets" ? (isHalloweenMode ? "#690000ff" : "#f44336") : "transparent",
             borderRadius: "10px",
             mx: 0.5,
             "&.Mui-selected": {

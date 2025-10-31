@@ -1,9 +1,17 @@
 import React from "react";
 import { Box, Typography, Paper } from "@mui/material";
+import { useHalloween } from "../contexts/HalloweenContext";
 
 const CGU: React.FC = () => {
-  // Fonction pour transformer le texte avec emojis et couleurs alternées
+  const { isHalloweenMode } = useHalloween();
+
+  // Fonction pour transformer le texte avec emojis et couleurs alternées (mode Halloween)
   const transformText = (text: string) => {
+    if (!isHalloweenMode) {
+      // Mode normal : pas de transformation
+      return text;
+    }
+
     // Remplacer o par 🎃, i par 🕯️ et a par 👻
     const transformedText = text
       .replaceAll("o", "🎃")
@@ -34,7 +42,7 @@ const CGU: React.FC = () => {
         {transformText("Dernière mise à jour : 30 octobre 2025")}
       </Typography>
 
-      <Paper sx={{ p: 3, mt: 3, maxHeight: "70vh", overflowY: "auto", backgroundColor: '#2C2C2C' }}>
+      <Paper sx={{ p: 3, mt: 3, maxHeight: "70vh", overflowY: "auto", backgroundColor: '#2C2C2C', color: '#FFFFFF' }}>
         <Typography variant="h5" gutterBottom>
           {transformText("1. Présentation du service")}
         </Typography>

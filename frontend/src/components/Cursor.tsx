@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useHalloween } from '../contexts/HalloweenContext';
 
 export default function CustomCursor() {
+  const { isHalloweenMode } = useHalloween();
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -10,6 +12,15 @@ export default function CustomCursor() {
     window.addEventListener('mousemove', move);
     return () => window.removeEventListener('mousemove', move);
   }, []);
+
+  // Mode normal : curseur par défaut
+  if (!isHalloweenMode) {
+    return (
+      <style>
+        {`body { cursor: auto; }`}
+      </style>
+    );
+  }
 
   return (
     <>

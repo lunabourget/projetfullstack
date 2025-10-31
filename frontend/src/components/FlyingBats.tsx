@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHalloween } from '../contexts/HalloweenContext';
 
 type Creature = {
   id: number;
@@ -20,10 +21,17 @@ type Grave = {
 };
 
 export default function FlyingCreatures() {
+  const { isHalloweenMode } = useHalloween();
   const [creatures, setCreatures] = useState<Creature[]>([]);
   const [graves, setGraves] = useState<Grave[]>([]);
 
   useEffect(() => {
+    if (!isHalloweenMode) {
+      // Nettoyer les créatures et tombes quand le mode est désactivé
+      setCreatures([]);
+      setGraves([]);
+      return;
+    }
     const spawnCreature = () => {
       // 1 chance sur 10 d’être un hibou 🦉
       const isOwl = Math.random() < 0.1;
@@ -83,7 +91,7 @@ export default function FlyingCreatures() {
       clearInterval(interval);
       cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [isHalloweenMode]);
 
   const handleClick = (id: number, x: number, type: 'bat' | 'owl') => {
     if (type === 'bat') {

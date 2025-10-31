@@ -1,7 +1,12 @@
 import React from "react";
 import { Box } from "@mui/material";
+import { useHalloween } from "../contexts/HalloweenContext";
 
 const SpiderWebOverlay: React.FC = () => {
+  const { isHalloweenMode } = useHalloween();
+  
+  if (!isHalloweenMode) return null;
+  
   return (
     <Box
       component="img"

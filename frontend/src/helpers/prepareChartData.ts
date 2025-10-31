@@ -2,13 +2,15 @@ import { ChartDatum } from "../interfaces/chartDatum";
 import { Category } from "../interfaces/Category";
 import { Budget } from "../interfaces/Budget";
 import { Expense } from "../interfaces/Expense";
-import { categoryColors } from "../static/categoryColors";
+import { getCategoryColors } from "../static/categoryColors";
 
 export function prepareChartData(
   categories: Category[],
   budgets: Budget[],
-  expenses: Expense[]
+  expenses: Expense[],
+  isHalloweenMode: boolean = true
 ): { mainData: ChartDatum[]; middleData: ChartDatum[]; outerData: ChartDatum[] } {
+  const categoryColors = getCategoryColors(isHalloweenMode);
   const mainData: ChartDatum[] = categories.map((cat) => {
     const total = budgets
       .filter((b) => b.category_id === cat.id)
