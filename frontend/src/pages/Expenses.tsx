@@ -32,26 +32,43 @@ const Expenses: React.FC = () => {
   const API_BASE = process.env.REACT_APP_API_URL as string;
 
   const loadBudgets = useCallback(async () => {
-    const token = authService.getToken();
-    const res = await fetch(`${API_BASE}/api/budgets`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    setBudgets(data);
+      try {
+        const token = authService.getToken();
+        const res = await fetch(`${API_BASE}/api/budgets`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setBudgets(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('Erreur de récupération des budgets', e);
+        setBudgets([]);
+      }
   }, [API_BASE]);
 
   const loadCategories = useCallback(async () => {
-    const token = authService.getToken();
-    const res = await fetch(`${API_BASE}/api/categories`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    setCategories(data);
+    try {
+      const token = authService.getToken();
+      const res = await fetch(`${API_BASE}/api/categories`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setCategories(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error('Erreur de récupération des catégories', e);
+      setCategories([]);
+    }
   }, [API_BASE]);
 
   const loadExpenses = useCallback(async () => {
-    const data = await expenseService.getExpenses();
-    setExpenses(data);
+    try {
+      const data = await expenseService.getExpenses();
+      setExpenses(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error('Erreur de récupération des dépenses', e);
+      setExpenses([]);
+    }
   }, []);
 
   useEffect(() => {
@@ -144,7 +161,7 @@ const Expenses: React.FC = () => {
             }}
           >
             <MenuItem value="">Aucun</MenuItem>
-            {budgets.map((b) => (
+            {(budgets || []).map((b) => (
               <MenuItem key={b.id} value={b.id}>
                 {getBudgetLabel(b)}
               </MenuItem>

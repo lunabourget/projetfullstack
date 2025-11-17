@@ -27,19 +27,30 @@ const Budgets: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const loadBudgets = useCallback(async () => {
-    const data = await budgetService.getBudgets();
-    setBudgets(data);
+    try {
+      const data = await budgetService.getBudgets();
+      setBudgets(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error('Erreur de récupération des budgets', e);
+      setBudgets([]);
+    }
   }, []);
 
   const API_BASE = process.env.REACT_APP_API_URL as string;
 
   const loadCategories = useCallback(async () => {
-    const token = authService.getToken();
-    const res = await fetch(`${API_BASE}/api/categories`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    setCategories(data);
+    try {
+      const token = authService.getToken();
+      const res = await fetch(`${API_BASE}/api/categories`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setCategories(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error('Erreur de récupération des catégories', e);
+      setCategories([]);
+    }
   }, [API_BASE]);
 
   useEffect(() => {
@@ -107,7 +118,7 @@ const Budgets: React.FC = () => {
             }}
           >
             <MenuItem value="">Aucune</MenuItem>
-            {categories.map((c) => (
+            {(categories || []).map((c) => (
               <MenuItem key={c.id} value={c.id}>
                 {c.name || `Catégorie ${c.id}`}
               </MenuItem>
@@ -162,7 +173,7 @@ const Budgets: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {budgets.map((b) => (
+            {(budgets || []).map((b) => (
               <TableRow key={b.id}>
                 <TableCell>{b.category_name || "—"}</TableCell>
                 <TableCell>{b.amount}</TableCell>
