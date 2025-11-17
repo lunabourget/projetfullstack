@@ -2,8 +2,8 @@
 name: Deploy to VPS
 
 on:
-	push:
-		name: Deploy to VPS
+  push:
+	  name: Deploy to VPS
 
 		on:
 		  push:
@@ -57,12 +57,14 @@ on:
 			          host: ${{ env.REMOTE_HOST }}
 			          username: ${{ env.REMOTE_USER }}
 			          password: ${{ env.REMOTE_PASSWORD }}
+					---
 					name: Deploy to VPS
 
 					on:
 						push:
-							branches: [ main ]
-						workflow_dispatch: {}
+							branches:
+								- main
+						workflow_dispatch:
 
 					jobs:
 						deploy:
@@ -90,7 +92,7 @@ on:
 										username: ${{ env.REMOTE_USER }}
 										password: ${{ env.REMOTE_PASSWORD }}
 										port: ${{ env.REMOTE_PORT }}
-										source: "repo.tar.gz"
+										source: repo.tar.gz
 										target: ${{ env.REMOTE_PATH }}
 
 								- name: Extract and deploy on remote via SSH
@@ -102,29 +104,17 @@ on:
 										port: ${{ env.REMOTE_PORT }}
 										script: |
 											set -e
-											mkdir -p "${{ env.REMOTE_PATH }}"
-											# If scp put the file directly into the target path
-											if [ -f "${{ env.REMOTE_PATH }}/repo.tar.gz" ]; then
-												tar -xzf "${{ env.REMOTE_PATH }}/repo.tar.gz" -C "${{ env.REMOTE_PATH }}"
-												rm "${{ env.REMOTE_PATH }}/repo.tar.gz"
-											else
-												# Otherwise, try extracting from current dir
-												if [ -f repo.tar.gz ]; then
-													tar -xzf repo.tar.gz -C "${{ env.REMOTE_PATH }}"
-													rm repo.tar.gz
-												fi
-											fi
 											cd "${{ env.REMOTE_PATH }}"
-
-											# If Docker is available and there is a compose file, try to bring services up
+											if [ -f repo.tar.gz ]; then
+												tar -xzf repo.tar.gz
+												rm repo.tar.gz
+											fi
 											if command -v docker >/dev/null 2>&1; then
 												if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ]; then
 													docker compose pull || true
 													docker compose up -d --build || docker-compose up -d --build || true
 												fi
 											fi
-
-											# If a Node app is present, try installing and restarting with pm2 when available
 											if [ -f package.json ]; then
 												if command -v npm >/dev/null 2>&1; then
 													npm install --production || true
