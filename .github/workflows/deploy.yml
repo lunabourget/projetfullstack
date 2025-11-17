@@ -71,15 +71,13 @@ jobs:
         if: ${{ success() }}
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-            const base = 'https://github.com/';
             const run = process.env.GITHUB_RUN_ID;
             const full = process.env.GITHUB_REPOSITORY;
-              const targetUrlBase = 'https://github.com/';
-              const targetUrlPath = `${full}/actions/runs/${run}`;
-              const url = `${targetUrlBase}${targetUrlPath}`;
-            await github.repos.createCommitStatus({
+            const url = `https://github.com/${full}/actions/runs/${run}`;
+            await github.rest.repos.createCommitStatus({
               owner,
               repo,
               sha: process.env.GITHUB_SHA,
@@ -93,15 +91,13 @@ jobs:
         if: ${{ failure() }}
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-            const base = 'https://github.com/';
             const run = process.env.GITHUB_RUN_ID;
             const full = process.env.GITHUB_REPOSITORY;
-              const targetUrlBase = 'https://github.com/';
-              const targetUrlPath = `${full}/actions/runs/${run}`;
-              const url = `${targetUrlBase}${targetUrlPath}`;
-            await github.repos.createCommitStatus({
+            const url = `https://github.com/${full}/actions/runs/${run}`;
+            await github.rest.repos.createCommitStatus({
               owner,
               repo,
               sha: process.env.GITHUB_SHA,
