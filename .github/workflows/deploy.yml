@@ -34,12 +34,7 @@ jobs:
           username: ${{ env.REMOTE_USER }}
           password: ${{ env.REMOTE_PASSWORD }}
           port: ${{ env.REMOTE_PORT }}
-          source: |
-            backend/**
-            frontend/**
-            docker-compose.yml
-            package.json
-            README.md
+          source: .
           target: ${{ env.REMOTE_PATH }}
 
       - name: Extract and deploy on remote via SSH
