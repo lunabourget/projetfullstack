@@ -1,197 +1,113 @@
-
+---
+# yamllint disable rule:truthy
 name: Deploy to VPS
 
 on:
   push:
-	  name: Deploy to VPS
+    branches:
+      - main
+  workflow_dispatch:
 
-		on:
-		  push:
-		    branches: [ main ]
-		  workflow_dispatch: {}
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    env:
+      REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+      REMOTE_USER: ${{ secrets.REMOTE_USER }}
+      REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
+      REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+      REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
 
-		jobs:
-		  deploy:
-		    name: Deploy to VPS
-		    runs-on: ubuntu-latest
-		    env:
-			name: Deploy to VPS
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-			on:
-			  push:
-			    branches: [ main ]
-			  workflow_dispatch: {}
+      - name: Pack repository (exclude .git and workflows)
+        run: |
+          tar --exclude='.git' --exclude='.github' -czf repo.tar.gz .
 
-			jobs:
-			  deploy:
-			    name: Deploy to VPS
-			    runs-on: ubuntu-latest
-			    env:
-			      REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-			      REMOTE_USER: ${{ secrets.REMOTE_USER }}
-			      REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
-			      REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-			      REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
+      - name: Copy archive to remote via SCP
+        uses: appleboy/scp-action@v0.1.5
+        with:
+          host: ${{ env.REMOTE_HOST }}
+          username: ${{ env.REMOTE_USER }}
+          password: ${{ env.REMOTE_PASSWORD }}
+          port: ${{ env.REMOTE_PORT }}
+          source: repo.tar.gz
+          target: ${{ env.REMOTE_PATH }}
 
-			    steps:
-			      - name: Checkout repository
-			        uses: actions/checkout@v4
+      - name: Extract and deploy on remote via SSH
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ env.REMOTE_HOST }}
+          username: ${{ env.REMOTE_USER }}
+          password: ${{ env.REMOTE_PASSWORD }}
+          port: ${{ env.REMOTE_PORT }}
+          script: |
+            set -e
+            cd "${{ env.REMOTE_PATH }}"
+            if [ -f repo.tar.gz ]; then
+              tar -xzf repo.tar.gz
+              rm repo.tar.gz
+            fi
+            if command -v docker >/dev/null 2>&1; then
+              if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ]; then
+                docker compose pull || true
+                docker compose up -d --build || true
+                docker-compose up -d --build || true
+              fi
+            fi
+            if [ -f package.json ]; then
+              if command -v npm >/dev/null 2>&1; then
+                npm install --production || true
+              fi
+              if command -v pm2 >/dev/null 2>&1; then
+                pm2 restart all || pm2 start server.js --name projetfullstack || true
+              fi
+            fi
 
-			      - name: Pack repository (exclude .git and workflows)
-			        run: |
-			          tar --exclude='.git' --exclude='.github' -czf repo.tar.gz .
+      - name: Notify deployment success to GitHub
+        if: ${{ success() }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+            const base = 'https://github.com/';
+            const run = process.env.GITHUB_RUN_ID;
+            const full = process.env.GITHUB_REPOSITORY;
+              const targetUrlBase = 'https://github.com/';
+              const targetUrlPath = `${full}/actions/runs/${run}`;
+              const url = `${targetUrlBase}${targetUrlPath}`;
+            await github.repos.createCommitStatus({
+              owner,
+              repo,
+              sha: process.env.GITHUB_SHA,
+              state: 'success',
+              context: 'deploy',
+              description: 'Déploiement réussi',
+              target_url: url
+            });
 
-			      - name: Copy archive to remote via SCP
-			        uses: appleboy/scp-action@v0.1.5
-			        with:
-			          host: ${{ env.REMOTE_HOST }}
-			          username: ${{ env.REMOTE_USER }}
-			          password: ${{ env.REMOTE_PASSWORD }}
-			          port: ${{ env.REMOTE_PORT }}
-			          source: "repo.tar.gz"
-			          target: ${{ env.REMOTE_PATH }}
-
-			      - name: Extract and deploy on remote via SSH
-			        uses: appleboy/ssh-action@v0.1.5
-			        with:
-			          host: ${{ env.REMOTE_HOST }}
-			          username: ${{ env.REMOTE_USER }}
-			          password: ${{ env.REMOTE_PASSWORD }}
-					---
-					name: Deploy to VPS
-
-					on:
-						push:
-							branches:
-								- main
-						workflow_dispatch:
-
-					jobs:
-						deploy:
-							name: Deploy to VPS
-							runs-on: ubuntu-latest
-							env:
-								REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-								REMOTE_USER: ${{ secrets.REMOTE_USER }}
-								REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
-								REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-								REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
-
-							steps:
-								- name: Checkout repository
-									uses: actions/checkout@v4
-
-								- name: Pack repository (exclude .git and workflows)
-									run: |
-										tar --exclude='.git' --exclude='.github' -czf repo.tar.gz .
-
-								- name: Copy archive to remote via SCP
-									uses: appleboy/scp-action@v0.1.5
-									with:
-										host: ${{ env.REMOTE_HOST }}
-										username: ${{ env.REMOTE_USER }}
-										password: ${{ env.REMOTE_PASSWORD }}
-										port: ${{ env.REMOTE_PORT }}
-										source: repo.tar.gz
-										target: ${{ env.REMOTE_PATH }}
-
-								- name: Extract and deploy on remote via SSH
-									uses: appleboy/ssh-action@v0.1.5
-									with:
-										host: ${{ env.REMOTE_HOST }}
-										username: ${{ env.REMOTE_USER }}
-										password: ${{ env.REMOTE_PASSWORD }}
-										port: ${{ env.REMOTE_PORT }}
-										script: |
-											set -e
-											cd "${{ env.REMOTE_PATH }}"
-											if [ -f repo.tar.gz ]; then
-												tar -xzf repo.tar.gz
-												rm repo.tar.gz
-											fi
-											if command -v docker >/dev/null 2>&1; then
-												if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ]; then
-													docker compose pull || true
-													docker compose up -d --build || docker-compose up -d --build || true
-												fi
-											fi
-											if [ -f package.json ]; then
-												if command -v npm >/dev/null 2>&1; then
-													npm install --production || true
-												fi
-												if command -v pm2 >/dev/null 2>&1; then
-													pm2 restart all || pm2 start server.js --name projetfullstack || true
-												fi
-											fi
-
-								- name: Notify deployment success to GitHub
-									if: ${{ success() }}
-									uses: actions/github-script@v6
-									with:
-										script: |
-											const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-											await github.repos.createCommitStatus({
-												owner,
-												repo,
-												sha: process.env.GITHUB_SHA,
-												state: 'success',
-												context: 'deploy',
-												description: 'Déploiement réussi',
-												target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
-											});
-
-								- name: Notify deployment failure to GitHub
-									if: ${{ failure() }}
-									uses: actions/github-script@v6
-									with:
-										script: |
-											const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-											await github.repos.createCommitStatus({
-												owner,
-												repo,
-												sha: process.env.GITHUB_SHA,
-												state: 'failure',
-												context: 'deploy',
-												description: 'Échec du déploiement - voir les logs',
-												target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
-											});
-						              if command -v npm >/dev/null 2>&1; then
-						                npm install --production || true
-						              fi
-						              if command -v pm2 >/dev/null 2>&1; then
-						                pm2 restart all || pm2 start server.js --name projetfullstack || true
-						              fi
-						            fi
-
-						      - name: Notify deployment success to GitHub
-						        if: ${{ success() }}
-						        uses: actions/github-script@v6
-						        with:
-						          script: |
-						            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-						            await github.repos.createCommitStatus({
-						              owner,
-						              repo,
-						              sha: process.env.GITHUB_SHA,
-						              state: 'success',
-						              context: 'deploy',
-						              description: 'Déploiement réussi',
-						              target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
-						            });
-
-						      - name: Notify deployment failure to GitHub
-						        if: ${{ failure() }}
-						        uses: actions/github-script@v6
-						        with:
-						          script: |
-						            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-						            await github.repos.createCommitStatus({
-						              owner,
-						              repo,
-						              sha: process.env.GITHUB_SHA,
-						              state: 'failure',
-						              context: 'deploy',
-						              description: 'Échec du déploiement - voir les logs',
-						              target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
-						            });
+      - name: Notify deployment failure to GitHub
+        if: ${{ failure() }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+            const base = 'https://github.com/';
+            const run = process.env.GITHUB_RUN_ID;
+            const full = process.env.GITHUB_REPOSITORY;
+              const targetUrlBase = 'https://github.com/';
+              const targetUrlPath = `${full}/actions/runs/${run}`;
+              const url = `${targetUrlBase}${targetUrlPath}`;
+            await github.repos.createCommitStatus({
+              owner,
+              repo,
+              sha: process.env.GITHUB_SHA,
+              state: 'failure',
+              context: 'deploy',
+              description: 'Échec du déploiement',
+              target_url: url
+            });
 
