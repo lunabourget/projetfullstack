@@ -8,6 +8,10 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+  statuses: write
+
 jobs:
   deploy:
     name: Deploy to VPS
@@ -25,7 +29,14 @@ jobs:
 
       - name: Pack repository (exclude .git and workflows)
         run: |
-          tar --exclude='.git' --exclude='.github' -czf repo.tar.gz .
+          set -e
+          tar \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='./repo.tar.gz' \
+            --warning=no-file-changed \
+            -czf repo.tar.gz \
+            .
 
       - name: Copy archive to remote via SCP
         uses: appleboy/scp-action@v0.1.5
