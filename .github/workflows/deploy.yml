@@ -3,108 +3,112 @@ name: Deploy to VPS
 
 on:
 	push:
-		branches: [ main ]
-	workflow_dispatch: {}
-
-jobs:
-	deploy:
 		name: Deploy to VPS
-		runs-on: ubuntu-latest
-		env:
-			REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-			REMOTE_USER: ${{ secrets.REMOTE_USER }}
-			REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
-			REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-			REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
 
-		steps:
-			- name: Checkout repository
-				uses: actions/checkout@v4
+		on:
+		  push:
+		    branches: [ main ]
+		  workflow_dispatch: {}
 
-			- name: Pack repository (exclude .git and workflows)
-				run: |
-					tar --exclude='.git' --exclude='.github' -czf repo.tar.gz .
+		jobs:
+		  deploy:
+		    name: Deploy to VPS
+		    runs-on: ubuntu-latest
+		    env:
+		      REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+		      REMOTE_USER: ${{ secrets.REMOTE_USER }}
+		      REMOTE_PASSWORD: ${{ secrets.REMOTE_PASSWORD }}
+		      REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+		      REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
 
-			- name: Copy archive to remote via SCP
-				uses: appleboy/scp-action@v0.1.5
-				with:
-					host: ${{ env.REMOTE_HOST }}
-					username: ${{ env.REMOTE_USER }}
-					password: ${{ env.REMOTE_PASSWORD }}
-					port: ${{ env.REMOTE_PORT }}
-					source: "repo.tar.gz"
-					target: "${{ env.REMOTE_PATH }}"
+		    steps:
+		      - name: Checkout repository
+		        uses: actions/checkout@v4
 
-			- name: Extract and deploy on remote via SSH
-				uses: appleboy/ssh-action@v0.1.5
-				with:
-					host: ${{ env.REMOTE_HOST }}
-					username: ${{ env.REMOTE_USER }}
-					password: ${{ env.REMOTE_PASSWORD }}
-					port: ${{ env.REMOTE_PORT }}
-					script: |
-						set -e
-						mkdir -p "${{ env.REMOTE_PATH }}"
-						# If scp put the file directly into the target path
-						if [ -f "${{ env.REMOTE_PATH }}/repo.tar.gz" ]; then
-							tar -xzf "${{ env.REMOTE_PATH }}/repo.tar.gz" -C "${{ env.REMOTE_PATH }}"
-							rm "${{ env.REMOTE_PATH }}/repo.tar.gz"
-						else
-							# Otherwise, try extracting from current dir
-							if [ -f repo.tar.gz ]; then
-								tar -xzf repo.tar.gz -C "${{ env.REMOTE_PATH }}"
-								rm repo.tar.gz
-							fi
-						fi
-						cd "${{ env.REMOTE_PATH }}"
+		      - name: Pack repository (exclude .git and workflows)
+		        run: |
+		          tar --exclude='.git' --exclude='.github' -czf repo.tar.gz .
 
-						# If Docker is available and there is a compose file, try to bring services up
-						if command -v docker >/dev/null 2>&1; then
-							if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ]; then
-								docker compose pull || true
-								docker compose up -d --build || docker-compose up -d --build || true
-							fi
-						fi
+		      - name: Copy archive to remote via SCP
+		        uses: appleboy/scp-action@v0.1.5
+		        with:
+		          host: ${{ env.REMOTE_HOST }}
+		          username: ${{ env.REMOTE_USER }}
+		          password: ${{ env.REMOTE_PASSWORD }}
+		          port: ${{ env.REMOTE_PORT }}
+		          source: "repo.tar.gz"
+		          target: ${{ env.REMOTE_PATH }}
 
-						# If a Node app is present, try installing and restarting with pm2 when available
-						if [ -f package.json ]; then
-							if command -v npm >/dev/null 2>&1; then
-								npm install --production || true
-							fi
-							if command -v pm2 >/dev/null 2>&1; then
-								pm2 restart all || pm2 start server.js --name projetfullstack || true
-							fi
-						fi
+		      - name: Extract and deploy on remote via SSH
+		        uses: appleboy/ssh-action@v0.1.5
+		        with:
+		          host: ${{ env.REMOTE_HOST }}
+		          username: ${{ env.REMOTE_USER }}
+		          password: ${{ env.REMOTE_PASSWORD }}
+		          port: ${{ env.REMOTE_PORT }}
+		          script: |
+		            set -e
+		            mkdir -p "${{ env.REMOTE_PATH }}"
+		            # If scp put the file directly into the target path
+		            if [ -f "${{ env.REMOTE_PATH }}/repo.tar.gz" ]; then
+		              tar -xzf "${{ env.REMOTE_PATH }}/repo.tar.gz" -C "${{ env.REMOTE_PATH }}"
+		              rm "${{ env.REMOTE_PATH }}/repo.tar.gz"
+		            else
+		              # Otherwise, try extracting from current dir
+		              if [ -f repo.tar.gz ]; then
+		                tar -xzf repo.tar.gz -C "${{ env.REMOTE_PATH }}"
+		                rm repo.tar.gz
+		              fi
+		            fi
+		            cd "${{ env.REMOTE_PATH }}"
 
-			- name: Notify deployment success to GitHub
-				if: ${{ success() }}
-				uses: actions/github-script@v6
-				with:
-					script: |
-						const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-						await github.repos.createCommitStatus({
-							owner,
-							repo,
-							sha: process.env.GITHUB_SHA,
-							state: 'success',
-							context: 'deploy',
-							description: 'Déploiement réussi',
-							target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
-						});
+		            # If Docker is available and there is a compose file, try to bring services up
+		            if command -v docker >/dev/null 2>&1; then
+		              if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ]; then
+		                docker compose pull || true
+		                docker compose up -d --build || docker-compose up -d --build || true
+		              fi
+		            fi
 
-			- name: Notify deployment failure to GitHub
-				if: ${{ failure() }}
-				uses: actions/github-script@v6
-				with:
-					script: |
-						const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
-						await github.repos.createCommitStatus({
-							owner,
-							repo,
-							sha: process.env.GITHUB_SHA,
-							state: 'failure',
-							context: 'deploy',
-							description: 'Échec du déploiement - voir les logs',
-							target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
-						});
+		            # If a Node app is present, try installing and restarting with pm2 when available
+		            if [ -f package.json ]; then
+		              if command -v npm >/dev/null 2>&1; then
+		                npm install --production || true
+		              fi
+		              if command -v pm2 >/dev/null 2>&1; then
+		                pm2 restart all || pm2 start server.js --name projetfullstack || true
+		              fi
+		            fi
+
+		      - name: Notify deployment success to GitHub
+		        if: ${{ success() }}
+		        uses: actions/github-script@v6
+		        with:
+		          script: |
+		            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+		            await github.repos.createCommitStatus({
+		              owner,
+		              repo,
+		              sha: process.env.GITHUB_SHA,
+		              state: 'success',
+		              context: 'deploy',
+		              description: 'Déploiement réussi',
+		              target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
+		            });
+
+		      - name: Notify deployment failure to GitHub
+		        if: ${{ failure() }}
+		        uses: actions/github-script@v6
+		        with:
+		          script: |
+		            const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+		            await github.repos.createCommitStatus({
+		              owner,
+		              repo,
+		              sha: process.env.GITHUB_SHA,
+		              state: 'failure',
+		              context: 'deploy',
+		              description: 'Échec du déploiement - voir les logs',
+		              target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
+		            });
 
