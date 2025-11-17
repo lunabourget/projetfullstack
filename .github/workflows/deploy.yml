@@ -76,3 +76,35 @@ jobs:
 							fi
 						fi
 
+			- name: Notify deployment success to GitHub
+				if: ${{ success() }}
+				uses: actions/github-script@v6
+				with:
+					script: |
+						const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+						await github.repos.createCommitStatus({
+							owner,
+							repo,
+							sha: process.env.GITHUB_SHA,
+							state: 'success',
+							context: 'deploy',
+							description: 'Déploiement réussi',
+							target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
+						});
+
+			- name: Notify deployment failure to GitHub
+				if: ${{ failure() }}
+				uses: actions/github-script@v6
+				with:
+					script: |
+						const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+						await github.repos.createCommitStatus({
+							owner,
+							repo,
+							sha: process.env.GITHUB_SHA,
+							state: 'failure',
+							context: 'deploy',
+							description: 'Échec du déploiement - voir les logs',
+							target_url: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
+						});
+
