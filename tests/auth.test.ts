@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+// Base API configurable via variables d'environnement (CI ou local)
+const API_BASE = process.env.API_BASE_URL || process.env.REACT_APP_API_URL || 'http://51.254.205.63:5000';
+const API_URL = `${API_BASE}/api`;
 
 // Générer un pseudo unique pour éviter les conflits
 const testUser = {

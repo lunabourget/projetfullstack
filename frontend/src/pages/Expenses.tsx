@@ -1,5 +1,5 @@
 // src/pages/Expenses.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
@@ -29,34 +29,36 @@ const Expenses: React.FC = () => {
   const [date, setDate] = useState<string>(new Date().toISOString().slice(0, 10));
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const loadBudgets = async () => {
+  const API_BASE = process.env.REACT_APP_API_URL as string;
+
+  const loadBudgets = useCallback(async () => {
     const token = authService.getToken();
-    const res = await fetch("http://localhost:5000/api/budgets", {
+    const res = await fetch(`${API_BASE}/api/budgets`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
     setBudgets(data);
-  };
+  }, [API_BASE]);
 
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     const token = authService.getToken();
-    const res = await fetch("http://localhost:5000/api/categories", {
+    const res = await fetch(`${API_BASE}/api/categories`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
     setCategories(data);
-  };
+  }, [API_BASE]);
 
-  const loadExpenses = async () => {
+  const loadExpenses = useCallback(async () => {
     const data = await expenseService.getExpenses();
     setExpenses(data);
-  };
+  }, []);
 
   useEffect(() => {
     loadBudgets();
     loadCategories();
     loadExpenses();
-  }, []);
+  }, [loadBudgets, loadCategories, loadExpenses]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,5 +1,6 @@
 // src/services/auth.service.ts
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+// Base URL fournie via variable d'environnement (voir frontend/.env ou docker-compose)
+const API_URL = (process.env.REACT_APP_API_URL ?? 'http://51.254.205.63:5000');
 
 export interface LoginResponse {
   token: string;
@@ -51,4 +52,5 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+const authServiceInstance = new AuthService();
+export default authServiceInstance;

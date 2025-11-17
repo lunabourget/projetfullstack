@@ -2,7 +2,8 @@
 import authService from "./auth.service";
 import type { Expense } from "../interfaces/Expense";
 
-const API_URL = (process.env.REACT_APP_API_URL || "http://localhost:5000") + "/api/expenses";
+const base = process.env.REACT_APP_API_URL ?? 'http://51.254.205.63:5000';
+const API_URL = `${base}/api/expenses`;
 
 const headers = () => ({
   "Content-Type": "application/json",

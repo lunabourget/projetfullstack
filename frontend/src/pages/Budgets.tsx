@@ -1,5 +1,5 @@
 // src/pages/Budgets.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
@@ -26,24 +26,26 @@ const Budgets: React.FC = () => {
   const [amount, setAmount] = useState<string>("");
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const loadBudgets = async () => {
+  const loadBudgets = useCallback(async () => {
     const data = await budgetService.getBudgets();
     setBudgets(data);
-  };
+  }, []);
 
-  const loadCategories = async () => {
+  const API_BASE = process.env.REACT_APP_API_URL as string;
+
+  const loadCategories = useCallback(async () => {
     const token = authService.getToken();
-    const res = await fetch("http://localhost:5000/api/categories", {
+    const res = await fetch(`${API_BASE}/api/categories`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
     setCategories(data);
-  };
+  }, [API_BASE]);
 
   useEffect(() => {
     loadBudgets();
     loadCategories();
-  }, []);
+  }, [loadBudgets, loadCategories]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

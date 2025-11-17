@@ -9,6 +9,8 @@ on:
 jobs:
   test-auth:
     runs-on: ubuntu-latest
+    env:
+      API_BASE_URL: http://51.254.205.63:5000
 
     steps:
       - name: Checkout code
@@ -43,9 +45,9 @@ jobs:
 
       - name: Wait for backend to be ready
         run: |
-          echo "Checking backend health..."
+          echo "Checking backend health (API_BASE_URL=$API_BASE_URL)..."
           for i in {1..30}; do
-            if curl -f http://localhost:5000/api/categories > /dev/null 2>&1; then
+            if curl -f "$API_BASE_URL/api/categories" > /dev/null 2>&1; then
               echo "Backend is ready!"
               break
             fi
