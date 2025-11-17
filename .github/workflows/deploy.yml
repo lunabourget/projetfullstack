@@ -27,25 +27,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Pack repository (exclude .git and workflows)
-        run: |
-          set -e
-          tar \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='./repo.tar.gz' \
-            --warning=no-file-changed \
-            -czf repo.tar.gz \
-            .
-
-      - name: Copy archive to remote via SCP
+      - name: Copy project files to remote via SCP
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ env.REMOTE_HOST }}
           username: ${{ env.REMOTE_USER }}
           password: ${{ env.REMOTE_PASSWORD }}
           port: ${{ env.REMOTE_PORT }}
-          source: repo.tar.gz
+          source: |
+            backend/**
+            frontend/**
+            docker-compose.yml
+            package.json
+            README.md
           target: ${{ env.REMOTE_PATH }}
 
       - name: Extract and deploy on remote via SSH
@@ -58,10 +52,6 @@ jobs:
           script: |
             set -e
             cd "${{ env.REMOTE_PATH }}"
-            if [ -f repo.tar.gz ]; then
-              tar -xzf repo.tar.gz
-              rm repo.tar.gz
-            fi
             if command -v docker >/dev/null 2>&1; then
               if [ -f docker-compose.yml ] || [ -f docker-compose.yaml ]; then
                 docker compose pull || true
