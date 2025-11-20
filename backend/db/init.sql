@@ -87,32 +87,4 @@ VALUES
 ('alice', 'hashed_password_2'),
 ('bob', 'hashed_password_3');
 
-DO $$
-DECLARE
-    u RECORD;
-    b RECORD;
-    i INTEGER;
-    descriptions TEXT[] := ARRAY[
-        'Courses', 'Restaurant', 'Essence', 'Abonnement Netflix', 
-        'Médecin', 'Internet', 'Café', 'Sortie cinéma',
-        'Électricité', 'Voiture', 'Téléphone', 'Transport en commun',
-        'Achat vêtements', 'Formation', 'Investissement', 'Loisirs'
-    ];
-BEGIN
-    FOR u IN SELECT id FROM users LOOP
-        FOR i IN 1..30 LOOP
-            SELECT * INTO b FROM budgets 
-            WHERE user_id = u.id 
-            ORDER BY RANDOM() LIMIT 1;
 
-            INSERT INTO expenses (user_id, budget_id, amount, description, date)
-            VALUES (
-                u.id,
-                b.id,
-                ROUND((RANDOM() * 100 + 5)::numeric, 2),
-                descriptions[1 + FLOOR(RANDOM() * array_length(descriptions, 1))],
-                CURRENT_DATE - (FLOOR(RANDOM() * 90)) * INTERVAL '1 day'
-            );
-        END LOOP;
-    END LOOP;
-END $$;
